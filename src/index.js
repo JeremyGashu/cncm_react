@@ -1,12 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App';
+import AuthProvider from './contexts/auth';
 import reportWebVitals from './reportWebVitals';
 
+const queryClient = new QueryClient()
+
+
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <QueryClientProvider client={queryClient}>
+    <AuthProvider>
+      <BrowserRouter>
+        <React.StrictMode>
+          <App />
+        </React.StrictMode>
+      </BrowserRouter>
+    </AuthProvider>
+  </QueryClientProvider>,
   document.getElementById('root')
 );
 

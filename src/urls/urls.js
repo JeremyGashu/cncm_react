@@ -1,0 +1,1 @@
+export const baseUrl = 'https://api.a2p.et:5666/cmo/api/v1'
