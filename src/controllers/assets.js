@@ -20,6 +20,8 @@ export const fetchAssetByDepartmentId = async (id) => {
 export const addAssetToDepartment = async (data) => {
     const { userid, name, type, description, metaData, } = data
 
+    // console.log(JSON.stringify({ userid, name, type, description, metaData, }))
+
     console.log(data)
     let response = await axios.post(`${baseUrl}/users/${userid}/assets`, { name, type, description, metaData, }, {
         headers: {

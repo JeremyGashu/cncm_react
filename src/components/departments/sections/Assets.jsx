@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { addAssetToDepartment, deleteAsset, editAsset, fetchAssetByDepartmentId } from '../../../controllers/assets';
 import { fetchUsers } from '../../../controllers/users';
+import { fetchConfigs } from '../../../controllers/configs';
 
 
 const AssetsComponenet = () => {
@@ -18,17 +19,17 @@ const AssetsComponenet = () => {
     const { departmentid } = useParams()
 
     const { isLoading, isError, data, isSuccess } = useQuery(['assets', departmentid], () => fetchAssetByDepartmentId(departmentid))
-    const { isLoading: loadingUserData, data: usersData } = useQuery('users', fetchUsers)
-
+    const { isLoading: loadingUserData, data: usersData, isError: errorLoadingUsers } = useQuery('users', fetchUsers)
+    const { isLoading: loadingConfigsData, data: systemConfigData } = useQuery('configs', fetchConfigs)
 
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
     const [selectedAsset, setSelectedAsset] = useState({})
 
     const [editAssetDrawerOpen, setEditAssetDrawerOpen] = useState(false)
     const [addAssetDrawerOpen, setAddAssetDrawerOpen] = useState(false)
-    const [collaborators, setCollaborators] = useState([])
+    const [collabsCount, setCollabsCount] = useState(1)
     const [userId, setUserID] = useState()
-
+    const [collabs, setCollabs] = useState([{}])
 
     const queryClient = useQueryClient()
     const { mutate, isLoading: isAddingAsset } = useMutation(addAssetToDepartment, {
@@ -67,21 +68,25 @@ const AssetsComponenet = () => {
     const { register, handleSubmit, reset, setValue } = useForm()
 
     const createAllUserRows = (data) => {
-        return data.results.rows.map(user => {
-            return {
-                id: user.id,
-                name: `${user.first_name} ${user.middle_name} ${user.last_name}`,
-                email: user.email,
-                phone: user.phone,
-                first_name: user.first_name,
-                middle_name: user.middle_name,
-                last_name: user.last_name,
-                username: user.username,
-                role: user.role,
-                status: user.status,
-                createdAt: '12-12-2022'
-            }
-        })
+        if (data && data.results && data.results.rows) {
+            return data.results.rows.map(user => {
+                return {
+                    id: user.id,
+                    name: `${user.first_name} ${user.middle_name} ${user.last_name}`,
+                    email: user.email,
+                    phone: user.phone,
+                    first_name: user.first_name,
+                    middle_name: user.middle_name,
+                    last_name: user.last_name,
+                    username: user.username,
+                    role: user.role,
+                    status: user.status,
+                    createdAt: '12-12-2022'
+                }
+            })
+        }
+        return []
+
     }
 
     const columns = [
@@ -241,12 +246,15 @@ const AssetsComponenet = () => {
     ];
 
     const handleAddAsset = (data) => {
+        console.log(collabs)
 
         const { name, description } = data
 
         let metaData = {
-            contributors: collaborators
+            contributors: collabs
         }
+
+        console.log(JSON.stringify({ userid: userId, name, type: departmentid, description, metaData, }))
 
         mutate({ userid: userId, name, type: departmentid, description, metaData, })
     }
@@ -270,11 +278,74 @@ const AssetsComponenet = () => {
         })
     }
 
+    const getCollabSelectors = () => {
+        const collabsElement = []
+        for (let i = 0; i < collabsCount; i++) {
+            collabsElement.push(
+                <Grid container alignItems='flex-end' justifyContent='space-evenly'>
+                    <Grid item sx={{ mb: 1.5 }}>
+                        <Autocomplete
+                            id="tags-standard"
+                            options={createAllUserRows(usersData)}
+                            onChange={(e, newValue) => {
+                                if (newValue !== null) {
+                                    let newCollab = collabs
+                                    newCollab[i]['userid'] = newValue['id']
+                                    setCollabs(newCollab)
+                                }
+                            }}
+                            sx={{ border: '', width: 200 }}
+                            getOptionLabel={(option) => option.name}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    variant="standard"
+                                    label="Collaborators"
+                                    placeholder="Collaborators"
+                                />
+                            )}
+                        />
+                    </Grid>
+
+                    <Grid item >
+                        <input
+                            placeholder='Percent Amount'
+                            type='number'
+                            min={0}
+                            max={100}
+                            style={{ ...textInputFieldStyle, width: 160 }}
+                            onChange={(e) => {
+                                let newCollab = collabs
+                                newCollab[i]['percent'] = e.target.value
+                                setCollabs(newCollab)
+                            }}
+                        />
+                    </Grid>
+
+                    {!loadingConfigsData && systemConfigData && <select onChange={(e) => {
+                        let newCollab = collabs
+                        newCollab[i]['role'] = e.target.value
+                        setCollabs(newCollab)
+                    }} style={{ ...textInputFieldStyle, width: 160 }} placeholder='Role'>
+                        {
+                            systemConfigData['contributor-roles'].map(role => {
+                                return <option key={role.value} value={role.value}>{role.name}</option>
+                            })
+                        }
+                    </select>}
+                </Grid>
+
+
+            )
+        }
+        return collabsElement
+    }
+
     if (isLoading || deleteAssetMutation.isLoading || isAddingAsset || editAssetMutation.isLoading) {
         return <FullPageLoading />
     }
 
-    else if (isError) {
+    else if (isError || errorLoadingUsers) {
         return 'Error Loading...'
     }
     else if (!isLoading && isSuccess && data) {
@@ -298,7 +369,7 @@ const AssetsComponenet = () => {
                         </Button>
 
                         <Drawer open={addAssetDrawerOpen} onClose={() => { setAddAssetDrawerOpen(false) }} anchor='right' >
-                            <Grid sx={{ width: '400px', p: 3 }} container direction='row' justifyContent='space-between' alignItems='center'>
+                            <Grid sx={{ p: 3 }} container direction='row' justifyContent='space-between' alignItems='center'>
                                 <Grid item >
                                     <Typography sx={{ fontSize: 18, fontWeight: 'bold' }}>Add New Asset</Typography>
                                     <Typography sx={{ fontSize: 17, mb: 2 }}>Add New Asset</Typography>
@@ -313,24 +384,30 @@ const AssetsComponenet = () => {
 
                             </Grid>
 
-                            <form onSubmit={handleSubmit(handleAddAsset)} style={{ width: 400 }}>
+                            <form onSubmit={handleSubmit(handleAddAsset)} style={{ width: 700 }}>
 
 
 
-                                <input
-                                    placeholder='name'
-                                    style={{ ...textInputFieldStyle }}
-                                    {...register('name')}
-                                />
+                                <Grid container alignItems='flex-end' justifyContent='space-around'>
+                                    <Grid item>
+                                        <input
+                                            placeholder='name'
+                                            style={{ ...textInputFieldStyle, width: 200 }}
+                                            {...register('name')}
+                                        />
+                                    </Grid>
 
-                                <input
-                                    placeholder='Description'
-                                    style={{ ...textInputFieldStyle }}
-                                    {...register('description')}
-                                />
+                                    <Grid item>
+                                        <input
+                                            placeholder='Description'
+                                            style={{ ...textInputFieldStyle }}
+                                            {...register('description')}
+                                        />
+                                    </Grid>
+                                </Grid>
 
                                 {
-                                    !loadingUserData && usersData && <Box sx={{ mx: 3, my: 2, pb: 2 }}>
+                                    !loadingUserData && usersData && <Box sx={{ mx: 3, my: 2, pb: 2, width: 200 }}>
                                         <Autocomplete
                                             // multiple
                                             id="tags-standard"
@@ -354,8 +431,9 @@ const AssetsComponenet = () => {
                                     </Box>
                                 }
 
-                                {
-                                    !loadingUserData && usersData && <Box sx={{ mx: 3, my: 2, pb: 2 }}>
+                                {/* {
+                                    !loadingUserData && usersData &&
+                                    <Box sx={{ mx: 3, my: 2, pb: 2 }}>
                                         <Autocomplete
                                             multiple
                                             id="tags-standard"
@@ -377,10 +455,19 @@ const AssetsComponenet = () => {
                                             )}
                                         />
                                     </Box>
+                                } */}
+
+                                {
+                                    getCollabSelectors()
                                 }
 
-                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', m:2 }}>
-                                    <IconButton sx={{ width: 50, height: 50, backgroundColor: 'black', borderRadius: '50%', color: 'white', '&:hover': { backgroundColor: 'black', } }}><AddOutlined /></IconButton>
+                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', m: 2 }}>
+                                    <IconButton onClick={() => {
+
+                                        console.log(collabsCount)
+                                        setCollabsCount(prev => prev + 1)
+                                        setCollabs([...collabs, {}])
+                                    }} sx={{ width: 50, height: 50, backgroundColor: 'black', borderRadius: '50%', color: 'white', '&:hover': { backgroundColor: 'black', } }}><AddOutlined /></IconButton>
                                 </Box>
 
                                 <Box sx={{ display: 'flex', direction: 'row', alignItems: 'center', justifyContent: 'flex-end', p: 3 }} >
@@ -417,6 +504,8 @@ const AssetsComponenet = () => {
     else {
         return <FullPageLoading />
     }
+
+
 }
 
 export default AssetsComponenet
