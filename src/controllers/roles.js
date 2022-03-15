@@ -2,7 +2,6 @@ import axios from "axios"
 import { getAuthToken } from "../config/token"
 import { baseUrl } from "../urls/urls"
 
-//returns all users
 export const fetchRoles = async () => {
     const response = await axios.get(`${baseUrl}/auth/roles`, {
         headers: {

@@ -23,7 +23,6 @@ const RolesComponent = () => {
             setAddRoleDrawerOpen(false)
         },
         onSuccess: (data, variables, context) => {
-            // console.log('Added roles')
             queryClient.invalidateQueries('roles')
             reset()
         },
@@ -90,7 +89,7 @@ const RolesComponent = () => {
 
         {
             field: 'createdAt',
-            headerName: 'Crated At',
+            headerName: 'Created At',
             width: 150,
             renderCell: (cellValue) => {
                 console.log()
@@ -189,7 +188,10 @@ const RolesComponent = () => {
                                 setSelectedRole(cellValue['row'])
                                 setEditRoleDrawerOpen(true)
                             }}><EditOutlined sx={{ fontSize: 17 }} /></IconButton>
-                            <IconButton onClick={() => { setDeleteModalOpen(true) }}><Delete sx={{ color: 'red', fontSize: 17 }} /></IconButton>
+                            <IconButton onClick={() => {
+                                setDeleteModalOpen(true)
+                                setSelectedRole(cellValue['row'])
+                            }}><Delete sx={{ color: 'red', fontSize: 17 }} /></IconButton>
                             <Dialog
                                 open={deleteModalOpen}
                                 onClose={() => { setDeleteModalOpen(false) }}
@@ -200,7 +202,7 @@ const RolesComponent = () => {
                                 </DialogTitle>
                                 <DialogContent>
                                     <DialogContentText id="alert-dialog-description">
-                                        {`Are you sure you want to Delete role ${selectedRole['name']}?`}
+                                        {`Are you sure you want to Delete role ${selectedRole && selectedRole['name']}?`}
                                     </DialogContentText>
                                 </DialogContent>
                                 <DialogActions>
@@ -224,8 +226,7 @@ const RolesComponent = () => {
     ];
 
     const handleAddRole = (data) => {
-        console.log(data)
-        mutate({ name: data.name, description: data.description, permissions: data.permission, })
+        mutate({ name: data.name, description: data.description, permissions: data.permission || [], })
         // reset()
     }
 
@@ -243,7 +244,7 @@ const RolesComponent = () => {
         return data.map(role => {
             return {
                 id: role.id,
-                name: role.name,
+                name: role && role.name,
                 description: role.description,
                 createdAt: role.created_at,
                 status: role.status,
@@ -328,7 +329,7 @@ const RolesComponent = () => {
 
 
                                 <Box sx={{ display: 'flex', direction: 'row', alignItems: 'center', justifyContent: 'flex-end', p: 3 }} >
-                                    <Button type='submit' sx={{ color: 'white', backgroundColor: kGreenColor, '&:hover': { backgroundColor: kGreenColor } }}>Add Rolw</Button>
+                                    <Button type='submit' sx={{ color: 'white', backgroundColor: kGreenColor, '&:hover': { backgroundColor: kGreenColor } }}>Add Role</Button>
                                 </Box>
 
 

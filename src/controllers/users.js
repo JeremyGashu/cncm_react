@@ -2,7 +2,6 @@ import axios from "axios"
 import { getAuthToken } from "../config/token"
 import { baseUrl } from "../urls/urls"
 
-//returns all users
 export const fetchUsers = async () => {
     const response = await axios.get(`${baseUrl}/users`, {
         headers: {
@@ -14,9 +13,9 @@ export const fetchUsers = async () => {
 }
 
 export const addUser = async (data) => {
-    const { username, email, phone, password, confirm_password, role, first_name, middle_name, last_name } = data
+    const { username, email, phone, password, confirm_password, role, first_name, middle_name, last_name, birthdate, bank, account_number, representative, gender } = data
     console.log(data)
-    let response = await axios.post(`${baseUrl}/users`, { username, email, phone, password, confirm_password, role, first_name, middle_name, last_name }, {
+    let response = await axios.post(`${baseUrl}/users`, { username, email, phone, password, confirm_password, role, first_name, middle_name, last_name, birthdate, bank, account_number, representative, gender }, {
         headers: {
             'Authorization': `Bearer ${getAuthToken()}`
         }

@@ -1,64 +1,68 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Drawer, Autocomplete, TextField, FilledInput, Grid, IconButton, InputAdornment, Switch, Typography } from '@mui/material';
-import { Check, CloseOutlined, Delete, Download, EditOutlined, SearchOutlined, Tune } from '@mui/icons-material';
-import { kGreenColor, kGreenLight } from '../../theme/colors';
+import { Autocomplete, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Drawer, FilledInput, Grid, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
+import { CloseOutlined, Delete, Download, EditOutlined, SearchOutlined, Tune } from '@mui/icons-material';
+import { kGreenColor } from '../../../theme/colors';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { addUser, deleteUser, editUser, fetchUsers } from '../../controllers/users';
-import FullPageLoading from '../LoadingPage';
+import FullPageLoading from '../../LoadingPage';
 import { useState } from 'react';
-import { textInputFieldStyle } from '../../theme/theme';
-import { fetchRoles } from '../../controllers/roles';
+import { textInputFieldStyle } from '../../../theme/theme';
+import { fetchRoles } from '../../../controllers/roles';
 import { useForm } from 'react-hook-form';
-import { fetchConfigs } from '../../controllers/configs';
+import { editMembers } from '../../../controllers/souls';
+import { useParams } from 'react-router-dom';
+import { fetchConfigs } from '../../../controllers/configs';
+import { fetchUsers } from '../../../controllers/users';
+import { addMemberToAssociation, deleteMemberFromAssociation, fetchMembersOfAssociatin } from '../../../controllers/associations';
 
 
-const SystemUsers = () => {
+const AssociationMembersComponent = () => {
 
+    const { associationid } = useParams()
+    console.log(associationid)
 
+    const { isLoading, isError, data: associationMembersData, isSuccess } = useQuery(['association_members', associationid], () => fetchMembersOfAssociatin(associationid))
+    const { isLoading: loadingAllUsers, data: usersData, } = useQuery('users', fetchUsers)
 
-    const getRoleNameFromId = (id, roles) => {
-        return roles.find(role => role.id === id)
-    }
-
-
-    const { isLoading, isError, data: usersData, isSuccess } = useQuery('users', fetchUsers)
-    const { isLoading: loadingRoles, data: rolesData } = useQuery('roles', fetchRoles)
     const { isLoading: loadingConfigsData, data: systemConfigData } = useQuery('configs', fetchConfigs)
 
-    const [representativeID, setRepresentativeID] = useState()
+
+    const { isLoading: loadingRoles, data: rolesData } = useQuery('roles', fetchRoles)
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+    const [representativeID, setRepresentativeID] = useState()
+
     const [selectedUser, setSelectedUser] = useState({})
     const queryClient = useQueryClient()
-    const { mutate, isLoading: isAddingUser } = useMutation(addUser, {
+    const { mutate, isLoading: isAddingUser } = useMutation(addMemberToAssociation, {
         onMutate: (error, variables, context) => {
             setAddUserDrawerOpen(false)
         },
         onSuccess: (data, variables, context) => {
-            console.log('Added User')
-            queryClient.invalidateQueries('users')
+            console.log('Added Creative Soul')
+            queryClient.invalidateQueries('association_members')
             reset()
         },
     })
 
-    const editUserMutation = useMutation(editUser, {
+    const editUserMutation = useMutation(editMembers, {
         onMutate: (error, variables, context) => {
             setEditUserDrawerOpen(false)
         },
         onSuccess: (data, variables, context) => {
-            console.log('Edited User')
-            queryClient.invalidateQueries('users')
+            console.log('Edited Creative Soul')
+            queryClient.invalidateQueries('association_members')
             reset()
         },
     })
 
-    const deleteUserMutation = useMutation(deleteUser, {
+    const deleteUserMutation = useMutation(deleteMemberFromAssociation, {
         onMutate: (error, variables, context) => {
             setAddUserDrawerOpen(false)
         },
+        //
         onSuccess: (data, variables, context) => {
-            console.log('Deleted User')
-            queryClient.invalidateQueries('users')
+            console.log('Deleted Creative Soul')
+            queryClient.invalidateQueries('association_members')
         },
     })
 
@@ -70,7 +74,7 @@ const SystemUsers = () => {
         {
             field: 'name',
             headerName: 'Name',
-            width: 150,
+            width: 170,
             renderCell: (cellValue) => {
                 return (
                     <Typography sx={{ fontSize: 13, }}>{cellValue['row']['name']}</Typography>
@@ -79,7 +83,6 @@ const SystemUsers = () => {
             }
         },
         {
-
             field: 'email',
             headerName: 'Email',
             width: 150,
@@ -90,39 +93,37 @@ const SystemUsers = () => {
                 )
             }
         },
-
         {
-
-            field: 'username',
-            headerName: 'Username',
-            width: 170,
+            field: 'phone',
+            headerName: 'Phone Number',
+            width: 150,
             renderCell: (cellValue) => {
                 return (
-                    <Typography sx={{ fontSize: 13 }}>{cellValue['row']['username']}</Typography>
+                    <Typography sx={{ fontSize: 13 }}>{cellValue['row']['phone']}</Typography>
 
                 )
             }
         },
 
-        {
-            field: 'role',
-            headerName: 'Role',
-            width: 190,
-            renderCell: (cellValue) => {
-                return (
+        // {
+        //     field: 'role',
+        //     headerName: 'Role',
+        //     width: 190,
+        //     renderCell: (cellValue) => {
+        //         return (
 
-                    rolesData ? <Grid container sx={{ backgroundColor: '#f0f0f0', borderRadius: 3, p: 1 }} direction='row' alignItems='center'>
-                        <Grid item>
-                            <Check sx={{ fontSize: 13, color: '#444', mr: 1 }} />
-                        </Grid>
-                        <Grid item>
-                            <Typography sx={{ fontSize: 13, fontWeight: 'bold' }}>{getRoleNameFromId(cellValue['row']['role'], rolesData) && getRoleNameFromId(cellValue['row']['role'], rolesData).name}</Typography>
-                        </Grid>
-                    </Grid> : <Typography></Typography>
+        //             rolesData ? <Grid container sx={{ backgroundColor: '#f0f0f0', borderRadius: 3, p: 1 }} direction='row' alignItems='center'>
+        //                 <Grid item>
+        //                     <Check sx={{ fontSize: 13, color: '#444', mr: 1 }} />
+        //                 </Grid>
+        //                 <Grid item>
+        //                     <Typography sx={{ fontSize: 13, fontWeight: 'bold' }}>{getRoleNameFromId(cellValue['row']['role'], rolesData) && getRoleNameFromId(cellValue['row']['role'], rolesData).name}</Typography>
+        //                 </Grid>
+        //             </Grid> : <Typography></Typography>
 
-                )
-            }
-        },
+        //         )
+        //     }
+        // },
 
         {
             field: 'createdAt',
@@ -136,21 +137,21 @@ const SystemUsers = () => {
             }
 
         },
-        {
-            field: 'status',
-            headerName: 'Status',
-            width: 150,
-            renderCell: (cellValue) => {
-                return (
-                    <Grid container justifyContent='space-evenly' alignItems='center' sx={{ backgroundColor: kGreenLight, py: 1, borderRadius: 1 }}>
-                        <Check sx={{ fontSize: 13, color: kGreenColor }} />
-                        <Typography sx={{ color: kGreenColor, fontSize: 13, fontWeight: 'bold' }}>{cellValue['row']['status'] === 'active' ? 'Active' : 'Inactive'}</Typography>
-                        <Switch color={cellValue['row']['status'] === 'active' ? 'success' : 'error'} checked={cellValue['row']['status'] === 'active'} onChange={(e) => { console.log(e.target.checked) }} size='small' sx={{ size: 15 }} />
+        // {
+        //     field: 'status',
+        //     headerName: 'Status',
+        //     width: 150,
+        //     renderCell: (cellValue) => {
+        //         return (
+        //             <Grid container justifyContent='space-evenly' alignItems='center' sx={{ backgroundColor: kGreenLight, py: 1, borderRadius: 1 }}>
+        //                 <Check sx={{ fontSize: 13, color: kGreenColor }} />
+        //                 <Typography sx={{ color: kGreenColor, fontSize: 13, fontWeight: 'bold' }}>{cellValue['row']['status'] === 'active' ? 'Active' : 'Inactive'}</Typography>
+        //                 <Switch color={cellValue['row']['status'] === 'active' ? 'success' : 'error'} checked={cellValue['row']['status'] === 'active'} onChange={(e) => { console.log(e.target.checked) }} size='small' sx={{ size: 15 }} />
 
-                    </Grid>
-                )
-            }
-        },
+        //             </Grid>
+        //         )
+        //     }
+        // },
         {
             field: 'actions',
             headerName: 'Actions',
@@ -163,8 +164,8 @@ const SystemUsers = () => {
                             <Drawer open={editUserDrawerOpen} onClose={() => { setEditUserDrawerOpen(false) }} anchor='right' >
                                 <Grid sx={{ width: '400px', p: 3 }} container direction='row' justifyContent='space-between' alignItems='center'>
                                     <Grid item >
-                                        <Typography sx={{ fontSize: 18, fontWeight: 'bold' }}>Edit User</Typography>
-                                        <Typography sx={{ fontSize: 17, mb: 2 }}>Edit User Info</Typography>
+                                        <Typography sx={{ fontSize: 18, fontWeight: 'bold' }}>Edit Creative Soulr</Typography>
+                                        <Typography sx={{ fontSize: 17, mb: 2 }}>Edit Creative Soul</Typography>
 
                                     </Grid>
 
@@ -279,8 +280,8 @@ const SystemUsers = () => {
                                 setEditUserDrawerOpen(true)
                             }}><EditOutlined sx={{ fontSize: 17 }} /></IconButton>
                             <IconButton onClick={() => {
-                                setSelectedUser(cellValue['row'])
                                 setDeleteModalOpen(true)
+                                console.log(cellValue['row'])
                             }}><Delete sx={{ color: 'red', fontSize: 17 }} /></IconButton>
                             <Dialog
                                 open={deleteModalOpen}
@@ -288,19 +289,22 @@ const SystemUsers = () => {
 
                             >
                                 <DialogTitle id="alert-dialog-title">
-                                    {'Delete User?'}
+                                    {'Delete Creative Soul?'}
                                 </DialogTitle>
                                 <DialogContent>
                                     <DialogContentText id="alert-dialog-description">
-                                        {`Are you sure you want to Delete User ${selectedUser['first_name']} ${selectedUser['last_name']}?`}
+                                        {`Are you sure you want to Delete Creative Soul?`}
                                     </DialogContentText>
                                 </DialogContent>
                                 <DialogActions>
                                     <Button sx={{ color: 'white', mr: 1, backgroundColor: kGreenColor, '&:hover': { backgroundColor: 'green', } }} onClick={() => { setDeleteModalOpen(false) }}>Cancel</Button>
                                     <Button sx={{ color: 'white', mr: 1, backgroundColor: 'red', '&:hover': { backgroundColor: 'red', } }} onClick={() => {
-                                        console.log(cellValue['row']['id'])
+                                        // console.log(cellValue['row']['id'])
                                         setDeleteModalOpen(false)
-                                        deleteUserMutation.mutate(cellValue['row']['id'])
+
+                                        deleteUserMutation.mutate({ userid: cellValue['row']['id'], associationid })
+                                        // console.log(`User id id ${cellValue['row']['id']}`)
+                                        // console.log(`Association id ${associationid}`)
                                     }} autoFocus>
                                         Delete
                                     </Button>
@@ -315,13 +319,14 @@ const SystemUsers = () => {
     ];
 
     const handleAddUser = (data) => {
-        console.log(JSON.stringify({ username: data.username, email: data.email, phone: data.phone, password: data.password, confirm_password: data.confirm_password, role: data.role, first_name: data.first_name, middle_name: data.middle_name, last_name: data.last_name, bank: data.bank, account_number: data.account_number, representative: representativeID, gender: data.gender, birthdate: data.birthdate, }))
-        mutate({ username: data.username, email: data.email, phone: data.phone, password: data.password, confirm_password: data.confirm_password, role: data.role, first_name: data.first_name, middle_name: data.middle_name, last_name: data.last_name, bank: data.bank, account_number: data.account_number, representative: representativeID, gender: data.gender, birthdate: data.birthdate, })
+        console.log(JSON.stringify({ associationid, username: data.username, email: data.email, phone: data.phone, password: data.password, confirm_password: data.confirm_password, role: data.role, first_name: data.first_name, middle_name: data.middle_name, last_name: data.last_name, bank: data.bank, account_number: data.account_number, representative: representativeID, gender: data.gender, birthdate: data.birthdate, }))
+
+        mutate({ associationid, username: data.username, email: data.email, phone: data.phone, password: data.password, confirm_password: data.confirm_password, role: data.role, first_name: data.first_name, middle_name: data.middle_name, last_name: data.last_name, bank: data.bank, account_number: data.account_number, representative: representativeID, gender: data.gender, birthdate: data.birthdate, })
     }
 
     const handleEditUser = (data) => {
         console.log(data)
-        editUserMutation.mutate({ id: selectedUser['id'], username: data.username, email: data.email, phone: data.phone, password: data.password, confirm_password: data.confirm_password, role: data.role, first_name: data.first_name, middle_name: data.middle_name, last_name: data.last_name })
+        editUserMutation.mutate({ memberid: selectedUser['id'], username: data.username, email: data.email, phone: data.phone, password: data.password, confirm_password: data.confirm_password, role: data.role, first_name: data.first_name, middle_name: data.middle_name, last_name: data.last_name })
         // editUserForm.reset()
     }
 
@@ -330,6 +335,24 @@ const SystemUsers = () => {
 
 
     const createRowsDataFromResponse = (data) => {
+        return data.map(user => {
+            return {
+                id: user.id,
+                name: `${user.first_name} ${user.middle_name} ${user.last_name}`,
+                email: user.email,
+                phone: user.phone,
+                first_name: user.first_name,
+                middle_name: user.middle_name,
+                last_name: user.last_name,
+                username: user.username,
+                role: user.role,
+                status: user.status,
+                createdAt: '12-12-2022'
+            }
+        })
+    }
+
+    const allUsersRow = (data) => {
         return data.results.rows.map(user => {
             return {
                 id: user.id,
@@ -347,14 +370,14 @@ const SystemUsers = () => {
         })
     }
 
-    if (isLoading || loadingRoles || deleteUserMutation.isLoading || isAddingUser || editUserMutation.isLoading) {
+    if (isLoading || loadingRoles || deleteUserMutation.isLoading || isAddingUser || editUserMutation.isLoading || loadingAllUsers) {
         return <FullPageLoading />
     }
 
     else if (isError) {
         return 'Error Loading...'
     }
-    else if (!isLoading && isSuccess && usersData) {
+    else if (!isLoading && isSuccess && associationMembersData) {
         return (
             <Box sx={{ height: 400, width: '100%' }}>
                 <Grid container justifyContent='space-between' alignItems='center'>
@@ -371,14 +394,14 @@ const SystemUsers = () => {
                         <Button onClick={() => {
                             setAddUserDrawerOpen(true)
                         }} sx={{ color: 'white', mr: 1, backgroundColor: kGreenColor, '&:hover': { backgroundColor: 'green', } }}  >
-                            Add User
+                            Add Creative Soul
                         </Button>
 
                         <Drawer open={addUserDrawerOpen} onClose={() => { setAddUserDrawerOpen(false) }} anchor='right' >
                             <Grid sx={{ width: '400px', p: 3 }} container direction='row' justifyContent='space-between' alignItems='center'>
                                 <Grid item >
-                                    <Typography sx={{ fontSize: 18, fontWeight: 'bold' }}>Add New User</Typography>
-                                    <Typography sx={{ fontSize: 17, mb: 2 }}>Add New User by giving a Role</Typography>
+                                    <Typography sx={{ fontSize: 18, fontWeight: 'bold' }}>Add New Creative Soul</Typography>
+                                    <Typography sx={{ fontSize: 17, mb: 2 }}>Add New Creative Soul by giving a Role</Typography>
 
 
                                 </Grid>
@@ -462,7 +485,7 @@ const SystemUsers = () => {
                                 <Box sx={{ mx: 3, my: 2, pb: 2 }}>
                                     <Autocomplete
                                         id="tags-standard"
-                                        options={createRowsDataFromResponse(usersData)}
+                                        options={allUsersRow(usersData)}
                                         onChange={(e, newValue) => {
                                             setRepresentativeID(newValue['id'])
                                         }}
@@ -501,8 +524,9 @@ const SystemUsers = () => {
                                     }
                                 </select>}
 
+
                                 <Box sx={{ display: 'flex', direction: 'row', alignItems: 'center', justifyContent: 'flex-end', p: 3 }} >
-                                    <Button type='submit' sx={{ color: 'white', backgroundColor: kGreenColor, '&:hover': { backgroundColor: kGreenColor } }}>Add User</Button>
+                                    <Button type='submit' sx={{ color: 'white', backgroundColor: kGreenColor, '&:hover': { backgroundColor: kGreenColor } }}>Add Creative Soul</Button>
                                 </Box>
 
 
@@ -524,7 +548,7 @@ const SystemUsers = () => {
 
                 <DataGrid
                     disableSelectionOnClick={true}
-                    rows={createRowsDataFromResponse(usersData)}
+                    rows={createRowsDataFromResponse(associationMembersData)}
                     columns={columns}
                     pageSize={5}
                     rowsPerPageOptions={[5]}
@@ -538,4 +562,4 @@ const SystemUsers = () => {
     }
 }
 
-export default SystemUsers
+export default AssociationMembersComponent

@@ -11,8 +11,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import React, { useState } from 'react'
-import { Avatar, Badge, Divider, Grid, Paper } from '@mui/material';
-import { Dashboard, Edit, GroupOutlined, Logout, Notifications, Payment, PersonOutline, ReportOutlined, Settings } from '@mui/icons-material';
+import { Avatar, Badge, Divider, Grid } from '@mui/material';
+import { Dashboard, Edit, GroupOutlined, House, Logout, Notifications, Payment, PersonOutline, ReportOutlined, Settings } from '@mui/icons-material';
 import cncm_logo from '../../assets/cncm_logo.svg'
 import { kGreenColor } from '../../theme/colors';
 import { textThemes } from '../../theme/theme';
@@ -20,8 +20,18 @@ import { kDashboardBlack } from '../../config/colors';
 import SystemUsers from '../../components/system users/SystemUsers';
 import { useAuth } from '../../contexts/auth';
 import FullPageLoading from '../../components/LoadingPage';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import RolesComponent from '../../components/roles/Roles';
+import DepartmentsComponent from '../../components/departments/Departments';
+import CreativeSoulsComponent from '../../components/departments/sections/CreativeSouls';
+import AssetsComponent from '../../components/departments/sections/Assets';
+import AssociationComponent from '../../components/departments/sections/Associations';
+import CompaniesComponent from '../../components/clients/Companies';
+import NotificationComponent from '../../components/notificatins/Notificatins';
+import PaymentConfigComponent from '../../components/payment_configs/PaymentConfigComponent';
+import InvoiceComponent from '../../components/invoices/Invoives';
+import AssociationMembersComponent from '../../components/departments/sections/AssociationMembers';
+import ActivityLogComponent from '../../components/activity_log/ActivityLog';
 
 
 
@@ -43,7 +53,7 @@ const DashboardPage = (props) => {
   const dashboardElement = [
     {
       name: 'Dashboard',
-      component: <Typography>DashBoard</Typography>,
+      component: <FullPageLoading />,
       icon: <Dashboard />
 
     },
@@ -60,18 +70,23 @@ const DashboardPage = (props) => {
     },
     {
       name: 'Department',
-      component: <Typography>Drafts</Typography>,
+      component: <DepartmentsComponent />,
       icon: <GroupOutlined />
     },
     {
+      name: 'Company',
+      component: <CompaniesComponent />,
+      icon: <House />
+    },
+    {
       name: 'Configuration',
-      component: <Typography>Starred</Typography>,
+      component: <PaymentConfigComponent />,
       icon: <Settings />
     },
 
     {
       name: 'Invoices',
-      component: <Typography>Drafts</Typography>,
+      component: <InvoiceComponent />,
       icon: <Payment />
     },
     {
@@ -81,12 +96,12 @@ const DashboardPage = (props) => {
     },
     {
       name: 'Activity Log',
-      component: <Typography>Drafts</Typography>,
+      component: <ActivityLogComponent />,
       icon: <Edit />
     },
     {
       name: 'Notification',
-      component: <Typography>Drafts</Typography>,
+      component: <NotificationComponent />,
       icon: <Notifications />
     },
   ]
@@ -103,6 +118,7 @@ const DashboardPage = (props) => {
       <List>
         {dashboardElement.map((menu, index) => (
           <ListItem onClick={() => {
+            navigate('/dashboard')
             setSelectedIndex(index)
           }} button key={menu.name} sx={{ backgroundColor: selectedIndex === index ? kGreenColor : 'white', my: 0, py: 1, '&:hover': { backgroundColor: selectedIndex === index ? kGreenColor : 'white', } }}>
             <ListItemIcon>
@@ -222,11 +238,16 @@ const DashboardPage = (props) => {
         >
           <Toolbar />
 
-          <Paper elevation={3} sx={{ p: 2, pb: 10 }}>
-            {
-              dashboardElement[selectedIndex]['component']
-            }
-          </Paper>
+          {
+            <Routes>
+              <Route path='*' element={dashboardElement[selectedIndex]['component']} />
+              <Route path='souls/:departmentid' element={<CreativeSoulsComponent />} />
+              <Route path='assets/:departmentid' element={<AssetsComponent />} />
+              <Route path='associations/:departmentid' element={<AssociationComponent />} />
+              <Route path='assoc_members/:associationid' element={<AssociationMembersComponent />} />
+
+            </Routes>
+          }
         </Box>
       </Box>
 
