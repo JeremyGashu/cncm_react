@@ -56,3 +56,40 @@ export const deleteCompany = async (data) => {
     const res = await axios.delete(`${baseUrl}/companies/${companyid}`, { headers: { 'Authorization': `Bearer ${getAuthToken()}` } })
     return res.data
 }
+
+
+
+export const fetchMembersOfCompany = async (id) => {
+    const response = await axios.get(`${baseUrl}/companies/${id}/users`, {
+        headers: {
+            'Authorization': `Bearer ${getAuthToken()}`
+        }
+    })
+
+    console.log(response.data.results.rows)
+    if (response.status === 200) {
+        return response.data.results.rows.users
+    }
+}
+
+export const addMemberToCompany = async (data) => {
+
+    const { companyid, username, email, phone, password, confirm_password, role, first_name, middle_name, last_name, gender, bank, account_number, birthdate, representative } = data
+    console.log(data)
+    let response = await axios.post(`${baseUrl}/companies/${companyid}/users`, { username, email, phone, password, confirm_password, role, first_name, middle_name, last_name, gender, bank, account_number, birthdate, representative }, {
+        headers: {
+            'Authorization': `Bearer ${getAuthToken()}`
+        }
+
+    })
+    console.log(response.data)
+    return response.data
+}
+
+export const deleteMemberFromCompany = async ({ userid, companyid }) => {
+    console.log(`${baseUrl}/companies/${companyid}/users/${userid}`)
+
+    const res = await axios.delete(`${baseUrl}/companies/${companyid}/users/${userid}`, { headers: { 'Authorization': `Bearer ${getAuthToken()}` } })
+    console.log(res.data)
+    return res.data
+}

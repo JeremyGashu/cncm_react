@@ -185,7 +185,7 @@ const InvoiceComponent = () => {
 
                             <Paper sx={{ m: 3, p: 1, cursor: 'pointer', backgroundColor: kYellowLight }}>
                                 <Grid container direction='row' justifyContent='space-between' alignItems='center'>
-                                    <Grid item direction='row'>
+                                    <Grid item>
                                         <PersonOutlined sx={{ color: kGreenColor }} />
                                         <Typography sx={{ fontSize: 14, color: '#444', fontWeight: 'bold' }}>190000 Creative Souls</Typography>
                                     </Grid>

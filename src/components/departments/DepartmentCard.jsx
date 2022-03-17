@@ -2,14 +2,33 @@ import { Money, PersonSharp } from "@mui/icons-material"
 import { Grid, Paper, Typography } from "@mui/material"
 import DepartmentSectionCompnenet from "./DepartmentSectionCompnenet"
 import photography_image from '../../assets/photography.svg'
+
+import audio from '../../assets/audio.svg'
+import film from '../../assets/film.svg'
+import literature from '../../assets/literature.svg'
+
 import { kGreenColor } from "../../theme/colors"
 import { useQuery } from "react-query"
 import { fetchAggregate } from "../../controllers/aggregates"
 
-
 const DepartmentCard = ({ department }) => {
     // const departmentid = department.id
     const { isLoading, data } = useQuery(['aggregates', department.id], () => fetchAggregate(department.id))
+    console.log(department)
+    const imageByType = ({ type }) => {
+        switch (type) {
+            case 'literature':
+                return literature
+            case 'theater_and_drama':
+                return film
+            case 'audio_visual_and_film':
+                return audio
+            case 'photography':
+                return photography_image
+            default:
+                return audio
+        }
+    }
 
     return (
         <Paper elevation={3} sx={{ my: 3 }}>
@@ -17,7 +36,7 @@ const DepartmentCard = ({ department }) => {
                 <Grid sm={12} lg={4} md={4} item justifyContent='space-between' alignItems='center'>
                     <Grid sx={{ backgroundColor: '#FAFFD7', height: 150 }} container direction='column' alignItems='center' justifyContent='center'>
                         <Grid item>
-                            <img width={75} height={75} src={photography_image} alt='Department' />
+                            <img width={75} height={75} src={imageByType(department)} alt='Department' />
 
                         </Grid>
                         <Grid item>

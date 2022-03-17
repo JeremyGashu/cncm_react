@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="43.734" height="35.217" viewBox="0 0 43.734 35.217">
+  <g id="Group_60790" data-name="Group 60790" transform="translate(-30.167 1)">
+    <g id="Movie" transform="translate(31.167)">
+      <g id="Group_173" data-name="Group 173" transform="translate(0 0)">
+        <rect id="Rectangle_2" data-name="Rectangle 2" width="41.734" height="12.776" fill="#2b3131"/>
+        <g id="Group_172" data-name="Group 172" transform="translate(1.703)">
+          <path id="Path_176" data-name="Path 176" d="M47.852,14.814,41.89,20.776H48.6l5.962-5.962L47.746,8H41.038Z" transform="translate(-15.62 -8)" fill="#fc0"/>
+          <path id="Path_177" data-name="Path 177" d="M28.905,20.776l5.962-5.962L28.053,8H21.346l6.814,6.814L22.2,20.776Z" transform="translate(-9.555 -8)" fill="#fc0"/>
+          <path id="Path_178" data-name="Path 178" d="M9.178,8H4.308V9.837l4.977,4.977L4.308,19.791v.985H10.03l5.962-5.962Z" transform="translate(-4.308 -8)" fill="#fc0"/>
+        </g>
+        <line id="Line_1" data-name="Line 1" x1="41.734" transform="translate(0 6.814)" fill="#fff"/>
+        <circle id="Ellipse_7" data-name="Ellipse 7" cx="1.703" cy="1.703" r="1.703" transform="translate(0.852 5.11)" fill="#fff"/>
+        <rect id="Rectangle_3" data-name="Rectangle 3" width="41.734" height="20.441" transform="translate(0 12.776)" fill="#2b3131"/>
+        <path id="Path_179" data-name="Path 179" d="M35.693,36.681,25.155,30.6a1.4,1.4,0,0,0-2.107,1.216V43.981A1.4,1.4,0,0,0,25.155,45.2l10.539-6.085A1.4,1.4,0,0,0,35.693,36.681Z" transform="translate(-8.376 -14.901)" fill="#fff"/>
+      </g>
+      <path id="Path_184" data-name="Path 184" d="M43.581,20.776V8H33.5a18.928,18.928,0,0,1,2.413,10.173,14.468,14.468,0,0,1-2.345,7.782c-3,4.263-8.666,5.753-13.877,5.823S9.258,30.817,4.079,31.4a19.442,19.442,0,0,0-2.233.39v9.428H43.581Z" transform="translate(-1.846 -8)" fill="#1a1818" opacity="0.07"/>
+      <g id="Group_175" data-name="Group 175" transform="translate(0 0)">
+        <rect id="Rectangle_4" data-name="Rectangle 4" width="41.734" height="12.776" fill="none" stroke="#1a1818" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <g id="Group_174" data-name="Group 174" transform="translate(1.703)">
+          <path id="Path_180" data-name="Path 180" d="M47.852,14.814,41.89,20.776H48.6l5.962-5.962L47.746,8H41.038Z" transform="translate(-15.62 -8)" fill="none" stroke="#1a1818" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+          <path id="Path_181" data-name="Path 181" d="M28.905,20.776l5.962-5.962L28.053,8H21.346l6.814,6.814L22.2,20.776Z" transform="translate(-9.555 -8)" fill="none" stroke="#1a1818" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+          <path id="Path_182" data-name="Path 182" d="M9.178,8H4.308V9.837l4.977,4.977L4.308,19.791v.985H10.03l5.962-5.962Z" transform="translate(-4.308 -8)" fill="none" stroke="#1a1818" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        </g>
+        <line id="Line_2" data-name="Line 2" x1="41.734" transform="translate(0 6.814)" fill="none" stroke="#1a1818" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <circle id="Ellipse_8" data-name="Ellipse 8" cx="1.703" cy="1.703" r="1.703" transform="translate(0.852 5.11)" fill="none" stroke="#1a1818" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <rect id="Rectangle_5" data-name="Rectangle 5" width="41.734" height="20.441" transform="translate(0 12.776)" fill="none" stroke="#1a1818" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+        <path id="Path_183" data-name="Path 183" d="M35.693,36.681,25.155,30.6a1.4,1.4,0,0,0-2.107,1.216V43.981A1.4,1.4,0,0,0,25.155,45.2l10.539-6.085A1.4,1.4,0,0,0,35.693,36.681Z" transform="translate(-8.376 -14.901)" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      </g>
+      <path id="Path_185" data-name="Path 185" d="M9.392,8H1.846V41.217H9.392V8Z" transform="translate(-1.846 -8)" fill="#f9f9fa" style="mix-blend-mode: overlay;isolation: isolate"/>
+    </g>
+  </g>
+</svg>

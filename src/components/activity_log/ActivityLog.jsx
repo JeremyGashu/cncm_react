@@ -5,6 +5,8 @@ import { SearchOutlined } from '@mui/icons-material';
 import { useQuery } from 'react-query';
 import FullPageLoading from '../LoadingPage';
 import { getActivityLog } from '../../controllers/activity_log';
+import { toDateString } from '../../urls/date_converter';
+import { kGreenLight } from '../../theme/colors';
 
 const ActivityLogComponent = () => {
 
@@ -17,7 +19,7 @@ const ActivityLogComponent = () => {
             width: 150,
             renderCell: (cellValue) => {
                 return (
-                    <Typography sx={{ fontSize: 13, }}>{cellValue['row']['name']}</Typography>
+                    <Typography sx={{ fontSize: 13, fontWeight: 'bold' }}>{cellValue['row']['name']}</Typography>
 
                 )
             }
@@ -28,7 +30,9 @@ const ActivityLogComponent = () => {
             width: 150,
             renderCell: (cellValue) => {
                 return (
-                    <Typography sx={{ fontSize: 13, }}>{cellValue['row']['role']}</Typography>
+                    <Box sx={{ px: 2, py: 1, backgroundColor: kGreenLight, borderRadius: 4 }}>
+                        <Typography sx={{ fontSize: 13, }}>{cellValue['row']['role']}</Typography>
+                    </Box>
 
                 )
             }
@@ -50,18 +54,18 @@ const ActivityLogComponent = () => {
             width: 300,
             renderCell: (cellValue) => {
                 return (
-                    <Typography sx={{ fontSize: 13, wordWrap : 'break-word' }}>{cellValue['row']['data']}</Typography>
+                    <Typography sx={{ fontSize: 13, wordWrap: 'break-word' }}>{cellValue['row']['data']}</Typography>
                 )
             }
         },
 
         {
-            field: 'status',
-            headerName: 'Status',
+            field: 'statusCode',
+            headerName: 'Status Code',
             width: 150,
             renderCell: (cellValue) => {
                 return (
-                    <Typography sx={{ fontSize: 13 }}>{cellValue['row']['status']}</Typography>
+                    <Typography sx={{ fontSize: 13 }}>{cellValue['row']['statusCode']}</Typography>
 
                 )
             }
@@ -73,14 +77,11 @@ const ActivityLogComponent = () => {
             width: 150,
             renderCell: (cellValue) => {
                 return (
-                    <Typography sx={{ fontSize: 13 }}>{cellValue['row']['date']}</Typography>
+                    <Typography sx={{ fontSize: 13, fontWeight: 'bold' }}>{toDateString(new Date(cellValue['row']['date']))}</Typography>
 
                 )
             }
         },
-
-
-
     ];
 
     const createRowsDataFromResponse = (data) => {
@@ -88,8 +89,10 @@ const ActivityLogComponent = () => {
             return {
                 id: log.id,
                 name: `${log.user.first_name} ${log.user.middle_name} ${log.user.last_name}`,
-                date : log.createdAt,
-                data : JSON.stringify(log.data)
+                role: `${log.user.role.name}`,
+                date: log.createdAt,
+                data: JSON.stringify(log.data),
+                statusCode: log.statusCode
             }
         })
     }
@@ -122,10 +125,9 @@ const ActivityLogComponent = () => {
                     rows={createRowsDataFromResponse(data)}
                     columns={columns}
                     pageSize={5}
-                    rowHeight={100}
                     rowsPerPageOptions={[5]}
                     disableColumnSelector
-                    
+
                 />
             </Box>
         );

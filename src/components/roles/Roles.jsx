@@ -70,7 +70,7 @@ const RolesComponent = () => {
         {
             field: 'name',
             headerName: 'Name',
-            width: 180,
+            width: 200,
             renderCell: (cellValue) => {
                 return (
                     <Grid container sx={{ backgroundColor: '#f0f0f0', borderRadius: 3, p: 1 }} direction='row' alignItems='center'>

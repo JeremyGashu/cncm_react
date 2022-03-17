@@ -185,11 +185,11 @@ const AssociationComponent = () => {
 
                             <Paper sx={{ m: 3, p: 1, cursor: 'pointer', backgroundColor: kYellowLight }}>
                                 <Grid container direction='row' justifyContent='space-between' alignItems='center'>
-                                    <Grid item direction='row'>
+                                    <Grid item>
                                         <PersonOutlined sx={{ color: kGreenColor }} />
                                         <Typography sx={{ fontSize: 14, color: '#444', fontWeight: 'bold' }}>Creative Souls</Typography>
                                     </Grid>
-                                    <Link to={`/dashboard/assoc_members/${cellValue['row']['id']}`}>
+                                    <Link to={`/dashboard/association_members/${cellValue['row']['id']}`}>
                                         <Grid item>
                                             <IconButton><Visibility /></IconButton>
                                         </Grid></Link>

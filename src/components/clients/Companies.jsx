@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Drawer, FilledInput, Grid, IconButton, InputAdornment, Typography } from '@mui/material';
-import { CloseOutlined, Delete, EditOutlined, SearchOutlined } from '@mui/icons-material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Drawer, FilledInput, Grid, IconButton, InputAdornment, Paper, Typography } from '@mui/material';
+import { CloseOutlined, Delete, EditOutlined, PersonOutlined, SearchOutlined, Visibility } from '@mui/icons-material';
 import { kGreenColor } from '../../theme/colors';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import FullPageLoading from '../LoadingPage';
@@ -9,6 +9,9 @@ import { useState } from 'react';
 import { textInputFieldStyle } from '../../theme/theme';
 import { useForm } from 'react-hook-form';
 import { addCompanies, deleteCompany, editCompany, fetchCompanies } from '../../controllers/client';
+import { kYellowLight } from '../../config/colors';
+import { Link } from 'react-router-dom';
+
 
 
 const CompaniesComponent = () => {
@@ -20,6 +23,9 @@ const CompaniesComponent = () => {
 
     const [editCompanyDrawerOpen, setEditCompanyDrawerOpen] = useState(false)
     const [addCompanyDrawerOpen, setAddCompanyDrawerOpen] = useState(false)
+    const [companyDetailDrawerOpen, setCompanyDetailDrawerOpen] = useState(false)
+
+
 
 
     const queryClient = useQueryClient()
@@ -123,10 +129,77 @@ const CompaniesComponent = () => {
             width: 150,
             renderCell: (cellValue) => {
                 return (
+
+
                     <Grid container>
+
+
                         <Grid item>
-                            <Drawer open={editCompanyDrawerOpen} onClose={() => { 
-                                setEditCompanyDrawerOpen(false) 
+                            <IconButton onClick={() => {
+                                setSelectedCompany(cellValue['row'])
+                                setCompanyDetailDrawerOpen(true)
+                            }} ><Visibility sx={{ fontSize: 17 }} /></IconButton>
+                        </Grid>
+
+                        <Drawer open={companyDetailDrawerOpen} onClose={() => { setCompanyDetailDrawerOpen(false) }} anchor='right' >
+                            <Grid sx={{ width: '450px', p: 3 }} container direction='row' justifyContent='space-between' alignItems='center'>
+                                <Grid item >
+                                    <Typography sx={{ fontSize: 18, fontWeight: 'bold' }}>Association Detail</Typography>
+                                    <Typography sx={{ fontSize: 17, mb: 2 }}>Association Detail</Typography>
+
+                                </Grid>
+
+                                <Grid item>
+                                    <IconButton onClick={() => setCompanyDetailDrawerOpen(false)} ><CloseOutlined /></IconButton>
+                                </Grid>
+
+
+                            </Grid>
+
+                            <Grid container direction='column' alignItems='center' justifyContent='space-between' sx={{ p: 3 }}>
+                                <Grid container direction='row' alignItems='center' justifyContent='space-between'>
+                                    <Grid item>
+                                        <Typography sx={{ color: '#444', fontSize: 12 }}>Name</Typography>
+                                        <Typography sx={{ ml: 0.5, my: 1, color: '#444', fontSize: 13, fontWeight: 'bold' }}>{selectedCompany && selectedCompany.name}</Typography>
+                                    </Grid>
+
+                                    <Grid item>
+                                        <Typography sx={{ color: '#444', fontSize: 12 }}>Email</Typography>
+                                        <Typography sx={{ ml: 0.5, my: 1, color: '#444', fontSize: 13, fontWeight: 'bold' }}>{selectedCompany && selectedCompany.email}</Typography>
+                                    </Grid>
+                                </Grid>
+
+                                <Grid container direction='row' alignItems='center' justifyContent='space-between'>
+                                    <Grid item>
+                                        <Typography sx={{ color: '#444', fontSize: 12 }}>Phone</Typography>
+                                        <Typography sx={{ ml: 0.5, my: 1, color: '#444', fontSize: 13, fontWeight: 'bold' }}>{selectedCompany && selectedCompany.phone}</Typography>
+                                    </Grid>
+
+
+                                </Grid>
+
+
+                            </Grid>
+
+                            <Paper sx={{ m: 3, p: 1, cursor: 'pointer', backgroundColor: kYellowLight }}>
+                                <Grid container direction='row' justifyContent='space-between' alignItems='center'>
+                                    <Grid item>
+                                        <PersonOutlined sx={{ color: kGreenColor }} />
+                                        <Typography sx={{ fontSize: 14, color: '#444', fontWeight: 'bold' }}>Members</Typography>
+                                    </Grid>
+                                    <Link to={`/dashboard/company_members/${cellValue['row']['id']}`}>
+                                        <Grid item>
+                                            <IconButton><Visibility /></IconButton>
+                                        </Grid></Link>
+                                </Grid>
+                            </Paper>
+                        </Drawer>
+
+
+
+                        <Grid item>
+                            <Drawer open={editCompanyDrawerOpen} onClose={() => {
+                                setEditCompanyDrawerOpen(false)
                                 reset()
                             }} anchor='right' >
                                 <Grid sx={{ width: '400px', p: 3 }} container direction='row' justifyContent='space-between' alignItems='center'>
@@ -206,8 +279,8 @@ const CompaniesComponent = () => {
                             <IconButton onClick={() => { setDeleteModalOpen(true) }}><Delete sx={{ color: 'red', fontSize: 17 }} /></IconButton>
                             <Dialog
                                 open={deleteModalOpen}
-                                onClose={() => { 
-                                    setDeleteModalOpen(false) 
+                                onClose={() => {
+                                    setDeleteModalOpen(false)
                                     reset()
                                 }}
 
@@ -294,10 +367,10 @@ const CompaniesComponent = () => {
                             Add Company
                         </Button>
 
-                        <Drawer open={addCompanyDrawerOpen} onClose={() => { 
+                        <Drawer open={addCompanyDrawerOpen} onClose={() => {
                             setAddCompanyDrawerOpen(false)
                             reset()
-                         }} anchor='right' >
+                        }} anchor='right' >
                             <Grid sx={{ width: '400px', p: 3 }} container direction='row' justifyContent='space-between' alignItems='center'>
                                 <Grid item >
                                     <Typography sx={{ fontSize: 18, fontWeight: 'bold' }}>Add New Company</Typography>

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, Button, Drawer, FilledInput, Grid, IconButton, InputAdornment, Typography } from '@mui/material';
 import { CloseOutlined, SearchOutlined } from '@mui/icons-material';
-import { kGreenColor } from '../../theme/colors';
+import { kGreenColor, kGreenLight } from '../../theme/colors';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import FullPageLoading from '../LoadingPage';
 import { useState } from 'react';
@@ -12,7 +12,7 @@ import { fetchAllAssociations } from '../../controllers/associations';
 import { fetchNotificatins, sendNotifiationGroup } from '../../controllers/notifications';
 import { fetchDepartments } from '../../controllers/departments';
 import { fetchConfigs } from '../../controllers/configs';
-
+import { toDateString } from '../../urls/date_converter';
 
 const NotificationComponent = () => {
 
@@ -41,18 +41,6 @@ const NotificationComponent = () => {
     const { register, handleSubmit, reset } = useForm()
 
     const columns = [
-
-        // {
-        //     field: 'type',
-        //     headerName: 'Type',
-        //     width: 150,
-        //     renderCell: (cellValue) => {
-        //         return (
-        //             <Typography sx={{ fontSize: 13, }}>{cellValue['row']['type']}</Typography>
-
-        //         )
-        //     }
-        // },
         {
             field: 'title',
             headerName: 'Title',
@@ -70,8 +58,9 @@ const NotificationComponent = () => {
             width: 150,
             renderCell: (cellValue) => {
                 return (
-                    <Typography sx={{ fontSize: 13, }}>{cellValue['row']['priority']}</Typography>
-
+                    <Grid container justifyContent='space-evenly' alignItems='center' sx={{ backgroundColor: kGreenLight, py: 1, borderRadius: 1 }}>
+                        <Typography sx={{ color: cellValue['row']['priority'] === 'high' ? 'red' : kGreenColor, fontSize: 13, fontWeight: 'bold' }}>{cellValue['row']['priority'][0].toUpperCase() + cellValue['row']['priority'].substring(1)}</Typography>
+                    </Grid>
                 )
             }
         },
@@ -82,7 +71,7 @@ const NotificationComponent = () => {
             width: 150,
             renderCell: (cellValue) => {
                 return (
-                    <Typography sx={{ fontSize: 13, }}>{cellValue['row']['time']}</Typography>
+                    <Typography sx={{ fontSize: 13, }}>{toDateString(new Date(cellValue['row']['time']))}</Typography>
                 )
             }
         },
@@ -93,138 +82,19 @@ const NotificationComponent = () => {
             width: 150,
             renderCell: (cellValue) => {
                 return (
-                    <Typography sx={{ fontSize: 13, }}>{cellValue['row']['status']}</Typography>
+                    <Grid container justifyContent='space-evenly' alignItems='center' sx={{ backgroundColor: kGreenLight, py: 1, borderRadius: 1 }}>
+                        <Typography sx={{ fontSize: 13, fontWeight: 'bold' }}>{cellValue['row']['status'][0].toUpperCase() + cellValue['row']['status'].substring(1)}</Typography>
+                    </Grid>
                 )
             }
         },
-
-
-        // {
-        //     field: 'actions',
-        //     headerName: 'Actions',
-        //     width: 150,
-        //     renderCell: (cellValue) => {
-        //         return (
-        //             <Grid container>
-        //                 <Grid item>
-        //                     <Drawer open={editNotificationDrawerOpen} onClose={() => { setEditNotificationDrawerOpen(false) }} anchor='right' >
-        //                         <Grid sx={{ width: '400px', p: 3 }} container direction='row' justifyContent='space-between' alignItems='center'>
-        //                             <Grid item >
-        //                                 <Typography sx={{ fontSize: 18, fontWeight: 'bold' }}>Edit Notification</Typography>
-        //                                 <Typography sx={{ fontSize: 17, mb: 2 }}>Edit Notification</Typography>
-
-        //                             </Grid>
-
-        //                             <Grid item>
-        //                                 <IconButton onClick={() => setEditNotificationDrawerOpen(false)} ><CloseOutlined /></IconButton>
-        //                             </Grid>
-        //                         </Grid>
-
-        //                         <form onSubmit={handleSubmit(handleEditNotification)} style={{ width: 400 }}>
-
-
-
-        //                             <input
-        //                                 placeholder='Name'
-        //                                 style={{ ...textInputFieldStyle }}
-
-        //                                 {...register('name')}
-        //                             />
-
-        //                             <input
-        //                                 placeholder='Address'
-        //                                 style={{ ...textInputFieldStyle }}
-        //                                 {...register('address')}
-        //                             // defaultValue={selectedUser['middle_name']}
-
-        //                             />
-
-        //                             <input
-        //                                 placeholder='Phone'
-        //                                 style={{ ...textInputFieldStyle }}
-        //                                 {...register('[phone]')}
-        //                             // defaultValue={selectedUser['last_name']}
-
-        //                             />
-
-        //                             <input
-        //                                 placeholder='Email'
-        //                                 style={{ ...textInputFieldStyle }}
-        //                                 {...register('email')}
-        //                             // defaultValue={selectedUser['phone']}
-
-        //                             />
-
-        //                             <input
-        //                                 placeholder='License Number'
-        //                                 style={{ ...textInputFieldStyle }}
-        //                                 {...register('license_number')}
-        //                             />
-
-        //                             <Box sx={{ display: 'flex', direction: 'row', alignItems: 'center', justifyContent: 'flex-end', p: 3 }} >
-        //                                 <Button type='submit' sx={{ color: 'white', backgroundColor: kGreenColor, '&:hover': { backgroundColor: kGreenColor } }}>Edit Notification</Button>
-        //                             </Box>
-
-
-        //                         </form>
-
-        //                     </Drawer>
-        //                     <IconButton onClick={() => {
-        //                         setValue('name', cellValue['row']['name'])
-        //                         setValue('license_number', cellValue['row']['license_number'])
-        //                         setValue('email', cellValue['row']['email'])
-        //                         setValue('phone', cellValue['row']['phone'])
-        //                         setValue('address', cellValue['row']['address'])
-        //                         // setValue('phone', cellValue['row']['phone'])
-
-        //                         setSelectedNotification(cellValue['row'])
-        //                         setEditNotificationDrawerOpen(true)
-        //                     }}><EditOutlined sx={{ fontSize: 17 }} /></IconButton>
-        //                     <IconButton onClick={() => { setDeleteModalOpen(true) }}><Delete sx={{ color: 'red', fontSize: 17 }} /></IconButton>
-        //                     <Dialog
-        //                         open={deleteModalOpen}
-        //                         onClose={() => { setDeleteModalOpen(false) }}
-
-        //                     >
-        //                         <DialogTitle id="alert-dialog-title">
-        //                             {'Delete Notification?'}
-        //                         </DialogTitle>
-        //                         <DialogContent>
-        //                             <DialogContentText id="alert-dialog-description">
-        //                                 {`Are you sure you want to Delete Notifiation ${cellValue['row']['title']}?`}
-        //                             </DialogContentText>
-        //                         </DialogContent>
-        //                         <DialogActions>
-        //                             <Button sx={{ color: 'white', mr: 1, backgroundColor: kGreenColor, '&:hover': { backgroundColor: 'green', } }} onClick={() => { setDeleteModalOpen(false) }}>Cancel</Button>
-        //                             <Button sx={{ color: 'white', mr: 1, backgroundColor: 'red', '&:hover': { backgroundColor: 'red', } }} onClick={() => {
-
-        //                                 setDeleteModalOpen(false)
-        //                                 deleteNotificationMutation.mutate({ associationid: cellValue['row']['id'], departmentid })
-        //                             }} autoFocus>
-        //                                 Delete
-        //                             </Button>
-        //                         </DialogActions>
-        //                     </Dialog>
-        //                 </Grid>
-        //             </Grid>
-        //         )
-        //     }
-        // },
-
     ];
 
     const handleAddNotification = (data) => {
 
-        const { association_id, body, department_id, priority, type, title} = data
-
-        // console.log(JSON.stringify({ id: departmentid, name: data.name, email: data.email, address: data.address, phone: data.phone, license_number: data.license_number, license_document: data.license[0] }))
-
+        const { association_id, body, department_id, priority, type, title } = data
         mutate({ type, title, priority, body: { body }, association_id, department_id })
     }
-
-
-
-
 
     const createRowsDataFromResponse = (data) => {
         return data.map(notification => {
@@ -235,8 +105,6 @@ const NotificationComponent = () => {
                 time: notification.time,
                 body: notification.toString(),
                 status: notification.status,
-                // address: notification.address,
-                // license_number: notification.licenseNumber
             }
         })
     }

@@ -2,6 +2,19 @@ import axios from "axios"
 import { getAuthToken } from "../config/token"
 import { baseUrl } from "../urls/urls"
 
+export const getAllAssets = async () => {
+    const response = await axios.get(`${baseUrl}/assets`, {
+        headers: {
+            'Authorization': `Bearer ${getAuthToken()}`
+        }
+    })
+
+    console.log(response.data.results.rows)
+    if (response.status === 200) {
+        return response.data.results.rows
+    }
+}
+
 
 export const fetchAssetByDepartmentId = async (id) => {
     const response = await axios.get(`${baseUrl}/departments/${id}/assets`, {
@@ -14,7 +27,6 @@ export const fetchAssetByDepartmentId = async (id) => {
     if (response.status === 200) {
         return response.data.results.rows.assets
     }
-
 }
 
 export const addAssetToDepartment = async (data) => {

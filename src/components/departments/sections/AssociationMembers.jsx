@@ -31,6 +31,8 @@ const AssociationMembersComponent = () => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
     const [representativeID, setRepresentativeID] = useState()
 
+
+
     const [selectedUser, setSelectedUser] = useState({})
     const queryClient = useQueryClient()
     const { mutate, isLoading: isAddingUser } = useMutation(addMemberToAssociation, {

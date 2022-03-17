@@ -32,6 +32,8 @@ import PaymentConfigComponent from '../../components/payment_configs/PaymentConf
 import InvoiceComponent from '../../components/invoices/Invoives';
 import AssociationMembersComponent from '../../components/departments/sections/AssociationMembers';
 import ActivityLogComponent from '../../components/activity_log/ActivityLog';
+import CompanyMembersComponent from '../../components/clients/CompanyMembers';
+import UsageReportComponent from '../../components/usage_report/UsageReport';
 
 
 
@@ -91,7 +93,7 @@ const DashboardPage = (props) => {
     },
     {
       name: 'Usage Report',
-      component: <Typography>Drafts</Typography>,
+      component: <UsageReportComponent />,
       icon: <ReportOutlined />
     },
     {
@@ -244,8 +246,8 @@ const DashboardPage = (props) => {
               <Route path='souls/:departmentid' element={<CreativeSoulsComponent />} />
               <Route path='assets/:departmentid' element={<AssetsComponent />} />
               <Route path='associations/:departmentid' element={<AssociationComponent />} />
-              <Route path='assoc_members/:associationid' element={<AssociationMembersComponent />} />
-
+              <Route path='association_members/:associationid' element={<AssociationMembersComponent />} />
+              <Route path='company_members/:companyid' element={<CompanyMembersComponent />} />
             </Routes>
           }
         </Box>
