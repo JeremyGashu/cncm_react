@@ -31,10 +31,10 @@ export const addMemberToDepartment = async (data) => {
     return response.data
 }
 
-export const editMembers = async (data) => {
-    const { username, email, phone, password, confirm_password, role, first_name, middle_name, last_name, departmentid, memberid } = data
-    console.log(data)
-    let response = await axios.patch(`${baseUrl}/departments/${departmentid}/members/${memberid}`, { username, email, phone, password, confirm_password, role, first_name, middle_name, last_name }, {
+export const editDepartmentMembers = async (data) => {
+    const { username, email, phone, password, confirm_password, role, first_name, middle_name, last_name, bank, account_number, representative, gender, birthdate, memberid, departmentid, } = data
+    console.log(JSON.stringify(data))
+    let response = await axios.patch(`${baseUrl}/departments/${departmentid}/members/${memberid}`, { username, email, phone, password, confirm_password, role, first_name, middle_name, last_name, bank, account_number, representative, gender, birthdate }, {
         headers: {
             'Authorization': `Bearer ${getAuthToken()}`
         }

@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { textInputFieldStyle } from '../../../theme/theme';
 import { fetchRoles } from '../../../controllers/roles';
 import { useForm } from 'react-hook-form';
-import { editMembers } from '../../../controllers/souls';
+import { editDepartmentMembers } from '../../../controllers/souls';
 import { useParams } from 'react-router-dom';
 import { fetchConfigs } from '../../../controllers/configs';
 import { fetchUsers } from '../../../controllers/users';
@@ -46,7 +46,7 @@ const AssociationMembersComponent = () => {
         },
     })
 
-    const editUserMutation = useMutation(editMembers, {
+    const editUserMutation = useMutation(editDepartmentMembers, {
         onMutate: (error, variables, context) => {
             setEditUserDrawerOpen(false)
         },

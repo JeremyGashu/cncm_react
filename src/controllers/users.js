@@ -11,10 +11,13 @@ axios.interceptors.response.use(
     async (error) => {
         if (error.response.status === 401) {
             await localStorage.removeItem('authData')
-            toast.error('Example toast')
+            toast.error(error.response.data.message)
 
             // window.location.href = '/'
 
+        }
+        else if (error.response.code === 422) {
+            //errors : [{}]
         }
     });
 
