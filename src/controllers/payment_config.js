@@ -30,9 +30,9 @@ export const addPaymentConfig = async (data) => {
 }
 
 export const editPaymentConfig = async (data) => {
-    const { type, companyId, price , id} = data
+    const { type, companyId, price, id, status } = data
     console.log(data)
-    let response = await axios.patch(`${baseUrl}/payment-configs/${id}`, { type, companyId, price }, {
+    let response = await axios.patch(`${baseUrl}/payment-configs/${id}`, { type, companyId, price, status }, {
         headers: {
             'Authorization': `Bearer ${getAuthToken()}`
         }

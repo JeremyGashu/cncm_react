@@ -2,36 +2,32 @@ import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, Button, Drawer, FilledInput, Grid, IconButton, InputAdornment, Typography } from '@mui/material';
 import { CloseOutlined, SearchOutlined } from '@mui/icons-material';
-import { kGreenColor, kGreenLight } from '../../theme/colors';
+import { kGreenColor } from '../../theme/colors';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import FullPageLoading from '../LoadingPage';
 import { useState } from 'react';
 import { textInputFieldStyle } from '../../theme/theme';
 import { useForm } from 'react-hook-form';
-import { addPaymentConfig, deletePaymentConfig, editPaymentConfig } from '../../controllers/payment_config';
 import { fetchConfigs } from '../../controllers/configs';
 import { fetchCompanies } from '../../controllers/client';
 import { fetchAllUsageReports } from '../../controllers/usage_report';
 import { toDateString } from '../../urls/date_converter';
+import { addPaymentConfig } from '../../controllers/payment_config';
 
 
 const UsageReportComponent = () => {
 
-
     const { isLoading, isError, data, isSuccess } = useQuery('usage-reports', fetchAllUsageReports)
     const { isLoading: loadingConfigsData, data: systemConfigData } = useQuery('configs', fetchConfigs)
     const { isLoading: loadingCompanies, data: companies } = useQuery('companies', fetchCompanies)
-    const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-    const [selectedConfig, setSelectedConfig] = useState({})
 
-    const [editConfigDrawerOpen, setEditConfigDrawerOpen] = useState(false)
-    const [addConfigDrawerOpen, setAddConfigDrawerOpen] = useState(false)
+    const [addUsageReportDrawerOpen, setAddUsageReportDrawerOpen] = useState(false)
 
 
     const queryClient = useQueryClient()
     const { mutate, isLoading: isAddingUsageReport } = useMutation(addPaymentConfig, {
         onMutate: (error, variables, context) => {
-            setAddConfigDrawerOpen(false)
+            setAddUsageReportDrawerOpen(false)
         },
         onSuccess: (data, variables, context) => {
             console.log('Added')
@@ -40,29 +36,7 @@ const UsageReportComponent = () => {
         },
     })
 
-    const editPaymentConfigMutation = useMutation(editPaymentConfig, {
-        onMutate: (error, variables, context) => {
-            setEditConfigDrawerOpen(false)
-        },
-        onSuccess: (data, variables, context) => {
-            console.log('Edited ')
-            queryClient.invalidateQueries('usage-reports')
-            reset()
-        },
-    })
-
-    const deletePaymentConfigMutation = useMutation(deletePaymentConfig, {
-        onMutate: (error, variables, context) => {
-            setAddConfigDrawerOpen(false)
-        },
-        onSuccess: (data, variables, context) => {
-            console.log('Deleted config')
-            queryClient.invalidateQueries('usage-reports')
-        },
-    })
-
-
-    const { register, handleSubmit, reset, setValue } = useForm()
+    const { register, handleSubmit, reset } = useForm()
 
     const columns = [
         {
@@ -274,10 +248,6 @@ const UsageReportComponent = () => {
         mutate({ type: data.type, companyId: data.companyId, price: data.price })
     }
 
-    const handleEditConfig = (data) => {
-        // console.log(selectedConfig)
-        editPaymentConfigMutation.mutate({ id: selectedConfig['id'], type: data.type, companyId: selectedConfig['companyId'], price: data.price })
-    }
 
 
 
@@ -296,7 +266,7 @@ const UsageReportComponent = () => {
         })
     }
 
-    if (isLoading || deletePaymentConfigMutation.isLoading || isAddingUsageReport || editPaymentConfigMutation.isLoading || loadingConfigsData) {
+    if (isLoading || isAddingUsageReport || loadingConfigsData) {
         return <FullPageLoading />
     }
 
@@ -319,13 +289,13 @@ const UsageReportComponent = () => {
                     <Grid item sx={{ mb: 1 }}>
                         <Button onClick={() => {
                             reset()
-                            setAddConfigDrawerOpen(true)
+                            setAddUsageReportDrawerOpen(true)
 
                         }} sx={{ color: 'white', mr: 1, backgroundColor: kGreenColor, '&:hover': { backgroundColor: 'green', } }}  >
                             Add Usage Report
                         </Button>
 
-                        <Drawer open={addConfigDrawerOpen} onClose={() => { setAddConfigDrawerOpen(false) }} anchor='right' >
+                        <Drawer open={addUsageReportDrawerOpen} onClose={() => { setAddUsageReportDrawerOpen(false) }} anchor='right' >
                             <Grid sx={{ width: '400px', p: 3 }} container direction='row' justifyContent='space-between' alignItems='center'>
                                 <Grid item >
                                     <Typography sx={{ fontSize: 18, fontWeight: 'bold' }}>Add New Configuration</Typography>
@@ -335,7 +305,7 @@ const UsageReportComponent = () => {
                                 </Grid>
 
                                 <Grid item>
-                                    <IconButton onClick={() => setAddConfigDrawerOpen(false)} ><CloseOutlined /></IconButton>
+                                    <IconButton onClick={() => setAddUsageReportDrawerOpen(false)} ><CloseOutlined /></IconButton>
                                 </Grid>
 
 

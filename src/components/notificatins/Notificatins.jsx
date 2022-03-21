@@ -59,7 +59,7 @@ const NotificationComponent = () => {
             renderCell: (cellValue) => {
                 return (
                     <Grid container justifyContent='space-evenly' alignItems='center' sx={{ backgroundColor: kGreenLight, py: 1, borderRadius: 1 }}>
-                        <Typography sx={{ color: cellValue['row']['priority'] === 'high' ? 'red' : kGreenColor, fontSize: 13, fontWeight: 'bold' }}>{cellValue['row']['priority'][0].toUpperCase() + cellValue['row']['priority'].substring(1)}</Typography>
+                        <Typography sx={{ fontSize: 13, fontWeight: 'bold' }}>{cellValue['row']['priority'][0].toUpperCase() + cellValue['row']['priority'].substring(1)}</Typography>
                     </Grid>
                 )
             }

@@ -29,9 +29,9 @@ export const addRole = async (data) => {
 
 
 export const editRole = async (data) => {
-    const { name, description, permissions, id } = data
+    const { name, description, permissions, id, status } = data
     console.log(data)
-    let response = await axios.patch(`${baseUrl}/auth/roles/${id}`, { name, description, permissions }, {
+    let response = await axios.patch(`${baseUrl}/auth/roles/${id}`, { name, description, permissions, status }, {
         headers: {
             'Authorization': `Bearer ${getAuthToken()}`
         }

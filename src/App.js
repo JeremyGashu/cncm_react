@@ -4,10 +4,13 @@ import LoginPage from "./screens/login/Login"
 
 const App = () => {
   return (
-    <Routes>
-      <Route path='/' element={<LoginPage />} />
-      <Route path='/dashboard/*' element={<DashboardPage />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path='/' element={<LoginPage />} />
+        <Route path='/dashboard/*' element={<DashboardPage />} />
+
+      </Routes>
+    </>
   )
 }
 

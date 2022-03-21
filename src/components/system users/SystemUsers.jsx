@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Drawer, Autocomplete, TextField, FilledInput, Grid, IconButton, InputAdornment, Switch, Typography } from '@mui/material';
-import { Check, CloseOutlined, Delete, Download, EditOutlined, SearchOutlined, Tune } from '@mui/icons-material';
+import { Check, CloseOutlined, Delete, Download, EditOutlined, SearchOutlined, Tune, Warning } from '@mui/icons-material';
 import { kGreenColor, kGreenLight } from '../../theme/colors';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { addUser, deleteUser, editUser, fetchUsers } from '../../controllers/users';
@@ -19,16 +19,16 @@ const SystemUsers = () => {
         return roles.find(role => role.id === id)
     }
 
-
-    const { isLoading, isError, data: usersData, isSuccess } = useQuery('users', fetchUsers)
+    const { isLoading, isError, data: usersData, isSuccess,  } = useQuery('users', fetchUsers)
     const { isLoading: loadingRoles, data: rolesData } = useQuery('roles', fetchRoles)
     const { isLoading: loadingConfigsData, data: systemConfigData } = useQuery('configs', fetchConfigs)
+
 
     const [representativeID, setRepresentativeID] = useState()
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
     const [selectedUser, setSelectedUser] = useState({})
     const queryClient = useQueryClient()
-    const { mutate, isLoading: isAddingUser } = useMutation(addUser, {
+    const { mutate, isLoading: isAddingUser, isError : errorAddingUser, data : addUserError } = useMutation(addUser, {
         onMutate: (error, variables, context) => {
             setAddUserDrawerOpen(false)
         },
@@ -60,6 +60,19 @@ const SystemUsers = () => {
         },
     })
 
+    const disableUserMutation = useMutation(editUser, {
+        onMutate: (error, variables, context) => {
+            // setAddUserDrawerOpen(false)
+        },
+        onSuccess: (data, variables, context) => {
+            console.log('Deleted User')
+            queryClient.invalidateQueries('users')
+        },
+    })
+
+    if(errorAddingUser) {
+        console.log(addUserError)
+    }
 
     const { register, handleSubmit, reset, setValue } = useForm()
 
@@ -122,28 +135,34 @@ const SystemUsers = () => {
             }
         },
 
-        {
-            field: 'createdAt',
-            headerName: 'Created At',
-            width: 150,
-            renderCell: (cellValue) => {
-                return (
-                    <Typography sx={{ fontSize: 13 }}>{cellValue['row']['createdAt']}</Typography>
+        // {
+        //     field: 'createdAt',
+        //     headerName: 'Created At',
+        //     width: 150,
+        //     renderCell: (cellValue) => {
+        //         return (
+        //             <Typography sx={{ fontSize: 13 }}>{cellValue['row']['createdAt']}</Typography>
 
-                )
-            }
+        //         )
+        //     }
 
-        },
+        // },
         {
             field: 'status',
             headerName: 'Status',
             width: 150,
             renderCell: (cellValue) => {
                 return (
-                    <Grid container justifyContent='space-evenly' alignItems='center' sx={{ backgroundColor: kGreenLight, py: 1, borderRadius: 1 }}>
-                        <Check sx={{ fontSize: 13, color: kGreenColor }} />
-                        <Typography sx={{ color: kGreenColor, fontSize: 13, fontWeight: 'bold' }}>{cellValue['row']['status'] === 'active' ? 'Active' : 'Inactive'}</Typography>
-                        <Switch color={cellValue['row']['status'] === 'active' ? 'success' : 'error'} checked={cellValue['row']['status'] === 'active'} onChange={(e) => { console.log(e.target.checked) }} size='small' sx={{ size: 15 }} />
+                    <Grid container justifyContent='space-evenly' alignItems='center' sx={{ backgroundColor: cellValue['row']['status'] === 'active' ? kGreenLight : null, py: 1, borderRadius: 1 }}>
+                        {cellValue['row']['status'] === 'active' && <Check sx={{ fontSize: 13, color: kGreenColor }} />}
+                        {cellValue['row']['status'] === 'inactive' && <Warning sx={{ fontSize: 13, color: 'yellow' }} />}
+                        <Typography sx={{ color: cellValue['row']['status'] === 'active' ? kGreenColor : 'yellowgreen', fontSize: 13, fontWeight: 'bold' }}>{cellValue['row']['status'] === 'active' ? 'Active' : 'Inactive'}</Typography>
+                        <Switch color={cellValue['row']['status'] === 'active' ? 'success' : 'error'} checked={cellValue['row']['status'] === 'active'} onChange={(e) => {
+                            setSelectedUser(cellValue['row'])
+                            disableUserMutation.mutate({ ...cellValue['row'], status: e.target.checked ? 'active' : 'inactive' })
+                            // console.log(JSON.stringify({ ...cellValue['row'], status: e.target.checked ? 'active' : 'inactive' }))
+
+                        }} size='small' sx={{ size: 15 }} />
 
                     </Grid>
                 )
@@ -177,10 +196,12 @@ const SystemUsers = () => {
 
 
 
+
+
+
                                     <input
                                         placeholder='First Name'
                                         style={{ ...textInputFieldStyle }}
-
                                         {...register('first_name')}
                                     />
 
@@ -188,64 +209,96 @@ const SystemUsers = () => {
                                         placeholder='Middle Name'
                                         style={{ ...textInputFieldStyle }}
                                         {...register('middle_name')}
-                                    // defaultValue={selectedUser['middle_name']}
-
                                     />
 
                                     <input
                                         placeholder='Last Name'
                                         style={{ ...textInputFieldStyle }}
                                         {...register('last_name')}
-                                    // defaultValue={selectedUser['last_name']}
+                                    />
 
+                                    {!loadingConfigsData && systemConfigData && <select {...register('gender')} style={{ ...textInputFieldStyle }} placeholder='Gender'>
+                                        {
+                                            systemConfigData['gender'].map(gender => {
+                                                return <option key={gender.value} value={gender.value}>{gender.name}</option>
+                                            })
+                                        }
+                                    </select>}
+
+                                    <input
+                                        placeholder='Date of Birth'
+                                        type='date'
+                                        style={{ ...textInputFieldStyle }}
+                                        {...register('birthdate')}
                                     />
 
                                     <input
                                         placeholder='Phone'
                                         style={{ ...textInputFieldStyle }}
                                         {...register('phone')}
-                                    // defaultValue={selectedUser['phone']}
-
                                     />
 
                                     <input
                                         placeholder='Username'
                                         style={{ ...textInputFieldStyle }}
                                         {...register('username')}
-                                    // defaultValue={selectedUser['username']}
+                                    />
 
+                                    {!loadingConfigsData && systemConfigData && <select {...register('bank')} style={{ ...textInputFieldStyle }} placeholder='Bank'>
+                                        {
+                                            systemConfigData['banks'].map(bank => {
+                                                return <option key={bank.value} value={bank.value}>{bank.name}</option>
+                                            })
+                                        }
+                                    </select>}
 
-
+                                    <input
+                                        placeholder='Account Number'
+                                        style={{ ...textInputFieldStyle }}
+                                        {...register('account_number')}
                                     />
 
                                     <input
                                         placeholder='Email'
                                         style={{ ...textInputFieldStyle }}
                                         {...register('email')}
-                                    // defaultValue={selectedUser['email']}
-
-
                                     />
+
+                                    <Box sx={{ mx: 3, my: 2, pb: 2 }}>
+                                        <Autocomplete
+                                            id="tags-standard"
+                                            options={createRowsDataFromResponse(usersData)}
+                                            onChange={(e, newValue) => {
+                                                setRepresentativeID(newValue['id'])
+                                            }}
+                                            sx={{ border: '' }}
+                                            getOptionLabel={(option) => option.name}
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    variant="standard"
+                                                    label="Representatives"
+                                                    placeholder="Representatives"
+                                                />
+                                            )}
+                                        />
+                                    </Box>
+
 
                                     <input
                                         placeholder='Password'
                                         type='password'
                                         style={{ ...textInputFieldStyle }}
                                         {...register('password')}
-                                    // defaultValue={selectedUser['password']}
-
                                     />
                                     <input
                                         placeholder='Confirm Password'
                                         type='password'
                                         style={{ ...textInputFieldStyle }}
                                         {...register('confirm_password')}
-                                    // defaultValue={selectedUser['confirm_password']}
-
                                     />
 
-                                    {!loadingRoles && rolesData && <select value={selectedUser['role']}
-                                        {...register('role')} style={{ ...textInputFieldStyle }} placeholder='Role'>
+                                    {!loadingRoles && rolesData && <select {...register('role')} style={{ ...textInputFieldStyle }} placeholder='Role'>
                                         {
                                             rolesData.map(role => {
                                                 return <option key={role.id} value={role.id}>{role.name}</option>
@@ -257,14 +310,10 @@ const SystemUsers = () => {
                                         <Button type='submit' sx={{ color: 'white', backgroundColor: kGreenColor, '&:hover': { backgroundColor: kGreenColor } }}>Edit User</Button>
                                     </Box>
 
-
                                 </form>
-
-
-
-
                             </Drawer>
                             <IconButton onClick={() => {
+                                console.log(cellValue['row'])
                                 setValue('username', cellValue['row']['username'])
                                 setValue('first_name', cellValue['row']['first_name'])
                                 setValue('last_name', cellValue['row']['last_name'])
@@ -273,8 +322,19 @@ const SystemUsers = () => {
                                 setValue('phone', cellValue['row']['phone'])
                                 setValue('password', cellValue['row']['password'])
                                 setValue('confirm_password', cellValue['row']['confirm_password'])
+
+                                setValue('birthdate', getDateFormated(cellValue['row']['birthdate']))
+                                setValue('representative', cellValue['row']['representative'])
+                                setRepresentativeID(cellValue['row']['representative'])
+                                setValue('bank', cellValue['row']['bank'])
+                                setValue('account_number', cellValue['row']['account_number'])
+                                setValue('role', cellValue['row']['role '])
+
+
+
                                 setSelectedUser(cellValue['row'])
                                 setEditUserDrawerOpen(true)
+                                console.log(cellValue['row'])
                             }}><EditOutlined sx={{ fontSize: 17 }} /></IconButton>
                             <IconButton onClick={() => {
                                 setSelectedUser(cellValue['row'])
@@ -319,16 +379,27 @@ const SystemUsers = () => {
 
     const handleEditUser = (data) => {
         console.log(data)
-        editUserMutation.mutate({ id: selectedUser['id'], username: data.username, email: data.email, phone: data.phone, password: data.password, confirm_password: data.confirm_password, role: data.role, first_name: data.first_name, middle_name: data.middle_name, last_name: data.last_name })
+        editUserMutation.mutate({ id: selectedUser['id'], username: data.username, email: data.email, phone: data.phone, password: data.password, confirm_password: data.confirm_password, role: data.role, first_name: data.first_name, middle_name: data.middle_name, last_name: data.last_name, bank: data.bank, account_number: data.account_number, representative: representativeID, gender: data.gender, birthdate: data.birthdate, status: selectedUser['status'] })
         // editUserForm.reset()
     }
+
 
     const [editUserDrawerOpen, setEditUserDrawerOpen] = useState(false)
     const [addUserDrawerOpen, setAddUserDrawerOpen] = useState(false)
 
+    const getDateFormated = (dateString) => {
+        let date = new Date(dateString)
+        let year = date.getFullYear()
+        let month = date.getMonth()
+        let d = date.getDate()
+        return `${year}-${month}-${d}`
+    }
+
 
     const createRowsDataFromResponse = (data) => {
         return data.results.rows.map(user => {
+
+            // console.log(getDateFormated(user['birthdate']))
             return {
                 id: user.id,
                 name: `${user.first_name} ${user.middle_name} ${user.last_name}`,
@@ -340,7 +411,12 @@ const SystemUsers = () => {
                 username: user.username,
                 role: user.role,
                 status: user.status,
-                createdAt: '12-12-2022'
+                createdAt: '12-12-2022',
+                account_number: user.account_number,
+                bank: user.bank,
+                representative: user.representative,
+                birthdate: user.birthdate,
+                gender: user.gender,
             }
         })
     }
@@ -465,6 +541,7 @@ const SystemUsers = () => {
                                         onChange={(e, newValue) => {
                                             setRepresentativeID(newValue['id'])
                                         }}
+                                        // value={representativeID}
                                         sx={{ border: '' }}
                                         getOptionLabel={(option) => option.name}
                                         renderInput={(params) => (

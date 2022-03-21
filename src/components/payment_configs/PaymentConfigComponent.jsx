@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Drawer, FilledInput, Grid, IconButton, InputAdornment, Switch, Typography } from '@mui/material';
-import { Check, CloseOutlined, Delete, EditOutlined, SearchOutlined } from '@mui/icons-material';
+import { Check, CloseOutlined, Delete, EditOutlined, SearchOutlined, Warning } from '@mui/icons-material';
 import { kGreenColor, kGreenLight } from '../../theme/colors';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import FullPageLoading from '../LoadingPage';
@@ -46,6 +46,17 @@ const PaymentConfigComponent = () => {
             console.log('Edited ')
             queryClient.invalidateQueries('payment-configs')
             reset()
+        },
+    })
+
+    const disableConfigMutation = useMutation(editPaymentConfig, {
+        
+        onMutate: (error, variables, context) => {
+            // setAddUserDrawerOpen(false)
+        },
+        onSuccess: (data, variables, context) => {
+            console.log('Disabled Config')
+            queryClient.invalidateQueries('payment-configs')
         },
     })
 
@@ -106,10 +117,15 @@ const PaymentConfigComponent = () => {
             width: 150,
             renderCell: (cellValue) => {
                 return (
-                    <Grid container justifyContent='space-evenly' alignItems='center' sx={{ backgroundColor: kGreenLight, py: 1, borderRadius: 1 }}>
-                        <Check sx={{ fontSize: 13, color: kGreenColor }} />
-                        <Typography sx={{ color: kGreenColor, fontSize: 13, fontWeight: 'bold' }}>{cellValue['row']['status'] === 'active' ? 'Active' : 'Inactive'}</Typography>
-                        <Switch color={cellValue['row']['status'] === 'active' ? 'success' : 'error'} checked={cellValue['row']['status'] === 'active'} onChange={(e) => { console.log(e.target.checked) }} size='small' sx={{ size: 15 }} />
+                    <Grid container justifyContent='space-evenly' alignItems='center' sx={{ backgroundColor: cellValue['row']['status'] === 'active' ? kGreenLight : null, py: 1, borderRadius: 1 }}>
+                        {cellValue['row']['status'] === 'active' && <Check sx={{ fontSize: 13, color: kGreenColor }} />}
+                        {cellValue['row']['status'] === 'inactive' && <Warning sx={{ fontSize: 13, color: 'yellow' }} />}
+                        <Typography sx={{ color: cellValue['row']['status'] === 'active' ? kGreenColor : 'yellowgreen', fontSize: 13, fontWeight: 'bold' }}>{cellValue['row']['status'] === 'active' ? 'Active' : 'Inactive'}</Typography>
+                        <Switch color={cellValue['row']['status'] === 'active' ? 'success' : 'error'} checked={cellValue['row']['status'] === 'active'} onChange={(e) => {
+                            setSelectedConfig(cellValue['row'])
+                            disableConfigMutation.mutate({ ...cellValue['row'], status: e.target.checked ? 'active' : 'inactive' })
+
+                        }} size='small' sx={{ size: 15 }} />
 
                     </Grid>
                 )
@@ -223,7 +239,7 @@ const PaymentConfigComponent = () => {
 
     const handleEditConfig = (data) => {
         // console.log(selectedConfig)
-        editPaymentConfigMutation.mutate({ id: selectedConfig['id'], type: data.type, companyId: selectedConfig['companyId'], price: data.price })
+        editPaymentConfigMutation.mutate({ id: selectedConfig['id'], type: data.type, companyId: selectedConfig['companyId'], price: data.price, status: selectedConfig['status'] })
     }
 
 
