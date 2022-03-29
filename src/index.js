@@ -31,6 +31,7 @@ ReactDOM.render(
           pauseOnFocusLoss
           draggable
           pauseOnHover
+          limit={3}
         />
       </BrowserRouter>
     </AuthProvider>

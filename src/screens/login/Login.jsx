@@ -74,7 +74,7 @@ const LoginPage = () => {
         <Grid container alignItems='center' justifyContent='space-between' >
             <CssBaseline />
             <Grid item lg={5} sm={12} >
-                <img style={{ height: query ? '70vh' : '100vh', width: query ? '100vw' : '50vw' }} src={image} alt='Login' />
+                <img style={{ height: query ? '70vh' : '100vh', width: query ? '100vw' : '60vw' }} src={image} alt='Login' />
             </Grid>
             <Grid item lg={5} sm={12}>
 

@@ -29,6 +29,9 @@ export const fetchAssetByDepartmentId = async (id) => {
     }
 }
 
+
+
+
 export const addAssetToDepartment = async (data) => {
     const { userid, name, type, description, metaData, } = data
 
@@ -63,4 +66,18 @@ export const deleteAsset = async (id) => {
     // const { associationid, } = data
     // const res = await axios.delete(`${baseUrl}/departments/${departmentid}/associations/${associationid}`, { headers: { 'Authorization': `Bearer ${getAuthToken()}` } })
     // return res.data
+}
+
+
+export const fetchAssetByCompantId = async (id) => {
+    const response = await axios.get(`${baseUrl}/departments/${id}/assets`, {
+        headers: {
+            'Authorization': `Bearer ${getAuthToken()}`
+        }
+    })
+
+    console.log(response.data.results.rows)
+    if (response.status === 200) {
+        return response.data.results.rows.assets
+    }
 }

@@ -12,6 +12,14 @@ import { fetchRoles } from '../../controllers/roles';
 import { useForm } from 'react-hook-form';
 import { fetchConfigs } from '../../controllers/configs';
 
+export const getDateFormated = (dateString) => {
+    let date = new Date(dateString)
+    let year = date.getFullYear()
+    let month = date.getMonth() + 1
+    let d = date.getDate()
+    return `${year}-${month}-${d}`
+}
+
 
 const SystemUsers = () => {
 
@@ -19,7 +27,7 @@ const SystemUsers = () => {
         return roles.find(role => role.id === id)
     }
 
-    const { isLoading, isError, data: usersData, isSuccess,  } = useQuery('users', fetchUsers)
+    const { isLoading, isError, data: usersData, isSuccess, } = useQuery('users', fetchUsers)
     const { isLoading: loadingRoles, data: rolesData } = useQuery('roles', fetchRoles)
     const { isLoading: loadingConfigsData, data: systemConfigData } = useQuery('configs', fetchConfigs)
 
@@ -28,7 +36,7 @@ const SystemUsers = () => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
     const [selectedUser, setSelectedUser] = useState({})
     const queryClient = useQueryClient()
-    const { mutate, isLoading: isAddingUser, isError : errorAddingUser, data : addUserError } = useMutation(addUser, {
+    const { mutate, isLoading: isAddingUser, isError: errorAddingUser, data: addUserError } = useMutation(addUser, {
         onMutate: (error, variables, context) => {
             setAddUserDrawerOpen(false)
         },
@@ -70,7 +78,7 @@ const SystemUsers = () => {
         },
     })
 
-    if(errorAddingUser) {
+    if (errorAddingUser) {
         console.log(addUserError)
     }
 
@@ -387,13 +395,7 @@ const SystemUsers = () => {
     const [editUserDrawerOpen, setEditUserDrawerOpen] = useState(false)
     const [addUserDrawerOpen, setAddUserDrawerOpen] = useState(false)
 
-    const getDateFormated = (dateString) => {
-        let date = new Date(dateString)
-        let year = date.getFullYear()
-        let month = date.getMonth()
-        let d = date.getDate()
-        return `${year}-${month}-${d}`
-    }
+
 
 
     const createRowsDataFromResponse = (data) => {
@@ -454,8 +456,6 @@ const SystemUsers = () => {
                                 <Grid item >
                                     <Typography sx={{ fontSize: 18, fontWeight: 'bold' }}>Add New User</Typography>
                                     <Typography sx={{ fontSize: 17, mb: 2 }}>Add New User by giving a Role</Typography>
-
-
                                 </Grid>
 
                                 <Grid item>

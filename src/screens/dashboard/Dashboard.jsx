@@ -12,7 +12,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import React, { useState } from 'react'
 import { Avatar, Badge, Divider, Grid } from '@mui/material';
-import { Dashboard, Edit, GroupOutlined, House, Logout, Notifications, Payment, PersonOutline, ReportOutlined, Settings } from '@mui/icons-material';
+import { Dashboard, Edit, GroupOutlined, House, Logout, MoneyOutlined, Notifications, Payment, PersonOutline, ReportOutlined, Settings } from '@mui/icons-material';
 import cncm_logo from '../../assets/cncm_logo.svg'
 import { kGreenColor } from '../../theme/colors';
 import { textThemes } from '../../theme/theme';
@@ -34,6 +34,10 @@ import AssociationMembersComponent from '../../components/departments/sections/A
 import ActivityLogComponent from '../../components/activity_log/ActivityLog';
 import CompanyMembersComponent from '../../components/clients/CompanyMembers';
 import UsageReportComponent from '../../components/usage_report/UsageReport';
+import { getUserType } from '../../config/check_user_type';
+import CompanyAssetsComponenet from '../../components/comapny_assets/CompanyAssetsComponent';
+import CompanyUsageReportComponent from '../../components/company_usage_report/CompanyUsageReportComponent';
+import CompanyInvoicesComponent from '../../components/company_invoices/CompanyInvoicesComponent';
 
 
 
@@ -108,6 +112,50 @@ const DashboardPage = (props) => {
     },
   ]
 
+  const companyDashboardElement = [
+    {
+      name: 'Dashboard',
+      component: <FullPageLoading />,
+      icon: <Dashboard />
+
+    },
+    {
+      name: 'Assets',
+      component: <CompanyAssetsComponenet />,
+      icon: <MoneyOutlined />
+    },
+    {
+      name: 'Invoices',
+      // component: <InvoiceComponent />,
+      component: <CompanyInvoicesComponent />,
+
+      icon: <Payment />
+    },
+    {
+      name: 'Usage Report',
+      // component: <UsageReportComponent />,
+      component: <CompanyUsageReportComponent />,
+
+      icon: <ReportOutlined />
+    },
+    {
+      name: 'Notification',
+      // component: <NotificationComponent />,
+      component: <NotificationComponent />,
+
+      icon: <Notifications />
+    },
+  ]
+
+  const getDashboardElementFromPermission = () => {
+    switch (getUserType()) {
+      case 'company':
+        return companyDashboardElement
+      default:
+        return dashboardElement
+    }
+  }
+
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
@@ -118,7 +166,7 @@ const DashboardPage = (props) => {
       <img height={50} style={{ padding: 5, margin: 3, textAlign: 'center', cursor: 'pointer' }} src={cncm_logo} alt='CNCM Logo' />
       <Divider />
       <List>
-        {dashboardElement.map((menu, index) => (
+        {getDashboardElementFromPermission().map((menu, index) => (
           <ListItem onClick={() => {
             navigate('/dashboard')
             setSelectedIndex(index)
@@ -179,7 +227,7 @@ const DashboardPage = (props) => {
             <Grid container justifyContent='space-between' alignItems='center'>
               <Grid item>
                 <Typography sx={{ ...textThemes.normalText }} >
-                  {dashboardElement[selectedIndex]['name']}
+                  {getDashboardElementFromPermission()[selectedIndex]['name']}
                 </Typography>
               </Grid>
               <Grid item>
@@ -242,7 +290,7 @@ const DashboardPage = (props) => {
 
           {
             <Routes>
-              <Route path='*' element={dashboardElement[selectedIndex]['component']} />
+              <Route path='*' element={getDashboardElementFromPermission()[selectedIndex]['component']} />
               <Route path='souls/:departmentid' element={<CreativeSoulsComponent />} />
               <Route path='assets/:departmentid' element={<AssetsComponent />} />
               <Route path='associations/:departmentid' element={<AssociationComponent />} />
