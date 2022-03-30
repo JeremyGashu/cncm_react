@@ -1,0 +1,2 @@
+Form validation on each form elements
+Handle Error gracefully on network failure and exceptions

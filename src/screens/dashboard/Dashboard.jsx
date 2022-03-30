@@ -126,21 +126,18 @@ const DashboardPage = (props) => {
     },
     {
       name: 'Invoices',
-      // component: <InvoiceComponent />,
       component: <CompanyInvoicesComponent />,
 
       icon: <Payment />
     },
     {
       name: 'Usage Report',
-      // component: <UsageReportComponent />,
       component: <CompanyUsageReportComponent />,
 
       icon: <ReportOutlined />
     },
     {
       name: 'Notification',
-      // component: <NotificationComponent />,
       component: <NotificationComponent />,
 
       icon: <Notifications />

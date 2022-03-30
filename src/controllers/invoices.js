@@ -14,3 +14,15 @@ export const fetchInvoicesByCompany = async (id) => {
     }
 }
 
+export const fetchAllInvoices = async () => {
+    const response = await axios.get(`${baseUrl}/invoices`, {
+        headers: {
+            'Authorization': `Bearer ${getAuthToken()}`
+        }
+    })
+    if (response.status === 200) {
+        console.log(response.data)
+        return response.data.results.rows || []
+    }
+}
+
