@@ -472,18 +472,23 @@ const SystemUsers = () => {
                                 <input
                                     placeholder='First Name'
                                     style={{ ...textInputFieldStyle }}
+                                    required={true}
                                     {...register('first_name')}
                                 />
 
                                 <input
                                     placeholder='Middle Name'
                                     style={{ ...textInputFieldStyle }}
+                                    required={true}
+
                                     {...register('middle_name')}
                                 />
 
                                 <input
                                     placeholder='Last Name'
                                     style={{ ...textInputFieldStyle }}
+                                    required={true}
+
                                     {...register('last_name')}
                                 />
 
@@ -498,18 +503,24 @@ const SystemUsers = () => {
                                 <input
                                     placeholder='Date of Birth'
                                     type='date'
+                                    required={true}
+
                                     style={{ ...textInputFieldStyle }}
                                     {...register('birthdate')}
                                 />
 
                                 <input
                                     placeholder='Phone'
+                                    required={true}
+
                                     style={{ ...textInputFieldStyle }}
                                     {...register('phone')}
                                 />
 
                                 <input
                                     placeholder='Username'
+                                    required={true}
+
                                     style={{ ...textInputFieldStyle }}
                                     {...register('username')}
                                 />
@@ -523,6 +534,8 @@ const SystemUsers = () => {
                                 </select>}
 
                                 <input
+                                    required={true}
+
                                     placeholder='Account Number'
                                     style={{ ...textInputFieldStyle }}
                                     {...register('account_number')}
@@ -530,6 +543,8 @@ const SystemUsers = () => {
 
                                 <input
                                     placeholder='Email'
+                                    required={true}
+
                                     style={{ ...textInputFieldStyle }}
                                     {...register('email')}
                                 />
@@ -537,6 +552,7 @@ const SystemUsers = () => {
                                 <Box sx={{ mx: 3, my: 2, pb: 2 }}>
                                     <Autocomplete
                                         id="tags-standard"
+                                        aria-required={true}
                                         options={createRowsDataFromResponse(usersData)}
                                         onChange={(e, newValue) => {
                                             setRepresentativeID(newValue['id'])
@@ -558,12 +574,16 @@ const SystemUsers = () => {
 
                                 <input
                                     placeholder='Password'
+                                    required={true}
+
                                     type='password'
                                     style={{ ...textInputFieldStyle }}
                                     {...register('password')}
                                 />
                                 <input
                                     placeholder='Confirm Password'
+                                    required={true}
+
                                     type='password'
                                     style={{ ...textInputFieldStyle }}
                                     {...register('confirm_password')}

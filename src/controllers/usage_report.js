@@ -36,3 +36,20 @@ export const addUsageReportToCompany = async (data) => {
     return response.data
 }
 
+
+export const addBulkUsageReport = async (data) => {
+    const { companyId, usage_reports } = data
+
+    const formData = new FormData();
+    formData.append('companyId', companyId)
+    formData.append('license_document', usage_reports)
+
+    let response = await axios.post(`${baseUrl}/usage-reports/upload`, formData, {
+        headers: {
+            'Authorization': `Bearer ${getAuthToken()}`,
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+    console.log(response.data)
+    return response.data
+}

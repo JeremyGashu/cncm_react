@@ -8,24 +8,21 @@ import FullPageLoading from '../LoadingPage';
 import { useState } from 'react';
 import { textInputFieldStyle } from '../../theme/theme';
 import { useForm } from 'react-hook-form';
-import { fetchConfigs } from '../../controllers/configs';
 import { fetchCompanies } from '../../controllers/client';
-import { fetchAllUsageReports } from '../../controllers/usage_report';
+import { addBulkUsageReport, fetchAllUsageReports } from '../../controllers/usage_report';
 import { toDateString } from '../../urls/date_converter';
-import { addPaymentConfig } from '../../controllers/payment_config';
 
 
 const UsageReportComponent = () => {
 
     const { isLoading, isError, data, isSuccess } = useQuery('usage-reports', fetchAllUsageReports)
-    const { isLoading: loadingConfigsData, data: systemConfigData } = useQuery('configs', fetchConfigs)
     const { isLoading: loadingCompanies, data: companies } = useQuery('companies', fetchCompanies)
 
     const [addUsageReportDrawerOpen, setAddUsageReportDrawerOpen] = useState(false)
 
 
     const queryClient = useQueryClient()
-    const { mutate, isLoading: isAddingUsageReport } = useMutation(addPaymentConfig, {
+    const { mutate, isLoading: isAddingUsageReport } = useMutation(addBulkUsageReport, {
         onMutate: (error, variables, context) => {
             setAddUsageReportDrawerOpen(false)
         },
@@ -86,44 +83,7 @@ const UsageReportComponent = () => {
                 )
             }
         },
-        // {
-        //     field: 'email',
-        //     headerName: 'Email',
-        //     width: 150,
-        //     renderCell: (cellValue) => {
-        //         return (
-        //             <Typography sx={{ fontSize: 13, }}>{cellValue['row']['price']}</Typography>
 
-        //         )
-        //     }
-        // },
-
-        // {
-        //     field: 'assetUsed',
-        //     headerName: 'Asset Used',
-        //     width: 150,
-        //     renderCell: (cellValue) => {
-        //         return (
-        //             <Box sx={{ px: 2, py: 1, backgroundColor: '#f0f0f0', borderRadius: 3 }}>
-        //                 <Typography sx={{ fontSize: 13, }}>{cellValue['row']['type'][0].toUpperCase() + cellValue['row']['type'].substring(1)}</Typography>
-        //             </Box>
-
-        //         )
-        //     }
-        // // },
-        // {
-        //     field: 'total',
-        //     headerName: 'Total',
-        //     width: 150,
-        //     renderCell: (cellValue) => {
-        //         return (
-        //             <Box sx={{ px: 2, py: 1, backgroundColor: '#f0f0f0', borderRadius: 3 }}>
-        //                 <Typography sx={{ fontSize: 13, }}>{cellValue['row']['type'][0].toUpperCase() + cellValue['row']['type'].substring(1)}</Typography>
-        //             </Box>
-
-        //         )
-        //     }
-        // },
 
         {
             field: 'date',
@@ -138,119 +98,14 @@ const UsageReportComponent = () => {
                 )
             }
         },
-
-        // {
-        //     field: 'frequency',
-        //     headerName: 'Frequency',
-        //     width: 150,
-        //     renderCell: (cellValue) => {
-        //         return (
-        //             <Grid container justifyContent='space-evenly' alignItems='center' sx={{ backgroundColor: kGreenLight, py: 1, borderRadius: 1 }}>
-        //                 <Check sx={{ fontSize: 13, color: kGreenColor }} />
-        //                 <Typography sx={{ color: kGreenColor, fontSize: 13, fontWeight: 'bold' }}>{cellValue['row']['status'] === 'active' ? 'Active' : 'Inactive'}</Typography>
-        //                 <Switch color={cellValue['row']['status'] === 'active' ? 'success' : 'error'} checked={cellValue['row']['status'] === 'active'} onChange={(e) => { console.log(e.target.checked) }} size='small' sx={{ size: 15 }} />
-
-        //             </Grid>
-        //         )
-        //     }
-        // },
-        // {
-        //     field: 'actions',
-        //     headerName: 'Actions',
-        //     width: 150,
-        //     renderCell: (cellValue) => {
-        //         return (
-        //             <Grid container>
-        //                 <Grid item>
-        //                     <Drawer open={editConfigDrawerOpen} onClose={() => { setEditConfigDrawerOpen(false) }} anchor='right' >
-        //                         <Grid sx={{ width: '400px', p: 3 }} container direction='row' justifyContent='space-between' alignItems='center'>
-        //                             <Grid item >
-        //                                 <Typography sx={{ fontSize: 18, fontWeight: 'bold' }}>Edit Usgae Report</Typography>
-        //                                 <Typography sx={{ fontSize: 17, mb: 2 }}>Edit Usage Report</Typography>
-
-        //                             </Grid>
-
-        //                             <Grid item>
-        //                                 <IconButton onClick={() => setEditConfigDrawerOpen(false)} ><CloseOutlined /></IconButton>
-        //                             </Grid>
-
-
-        //                         </Grid>
-
-        //                         <form onSubmit={handleSubmit(handleEditConfig)} style={{ width: 400 }}>
-
-        //                             {!loadingConfigsData && systemConfigData && <select {...register('type')} style={{ ...textInputFieldStyle }} placeholder='Type'>
-        //                                 {
-        //                                     systemConfigData['payment-config-types'].map(role => {
-        //                                         return <option key={role.value} value={role.value}>{role.name}</option>
-        //                                     })
-        //                                 }
-        //                             </select>}
-
-        //                             <input
-        //                                 placeholder='Price'
-        //                                 style={{ ...textInputFieldStyle }}
-        //                                 {...register('price')}
-        //                             />
-
-        //                             <Box sx={{ display: 'flex', direction: 'row', alignItems: 'center', justifyContent: 'flex-end', p: 3 }} >
-        //                                 <Button type='submit' sx={{ color: 'white', backgroundColor: kGreenColor, '&:hover': { backgroundColor: kGreenColor } }}>Edit Payment Configuration</Button>
-        //                             </Box>
-
-
-        //                         </form>
-
-        //                     </Drawer>
-        //                     <IconButton onClick={() => {
-        //                         setValue('type', cellValue['row']['type'])
-        //                         setValue('companyId', cellValue['row']['companyId'])
-        //                         setValue('price', cellValue['row']['price'])
-        //                         setSelectedConfig(cellValue['row'])
-        //                         setEditConfigDrawerOpen(true)
-        //                     }}><EditOutlined sx={{ fontSize: 17 }} /></IconButton>
-        //                     <IconButton onClick={() => { setDeleteModalOpen(true) }}><Delete sx={{ color: 'red', fontSize: 17 }} /></IconButton>
-        //                     <Dialog
-        //                         open={deleteModalOpen}
-        //                         onClose={() => { setDeleteModalOpen(false) }}
-
-        //                     >
-        //                         <DialogTitle id="alert-dialog-title">
-        //                             {'Delete Configuration?'}
-        //                         </DialogTitle>
-        //                         <DialogContent>
-        //                             <DialogContentText id="alert-dialog-description">
-        //                                 {`Are you sure you want to Delete this Usage Report?`}
-        //                             </DialogContentText>
-        //                         </DialogContent>
-        //                         <DialogActions>
-        //                             <Button sx={{ color: 'white', mr: 1, backgroundColor: kGreenColor, '&:hover': { backgroundColor: 'green', } }} onClick={() => { setDeleteModalOpen(false) }}>Cancel</Button>
-        //                             <Button sx={{ color: 'white', mr: 1, backgroundColor: 'red', '&:hover': { backgroundColor: 'red', } }} onClick={() => {
-
-        //                                 setDeleteModalOpen(false)
-        //                                 deletePaymentConfigMutation.mutate(cellValue['row']['id'])
-        //                             }} autoFocus>
-        //                                 Delete
-        //                             </Button>
-        //                         </DialogActions>
-        //                     </Dialog>
-        //                 </Grid>
-        //             </Grid>
-        //         )
-        //     }
-        // },
-
     ];
 
-    const handleAddConfig = (data) => {
+    const handleAddUsageReport = (data) => {
 
         console.log(data)
 
-        mutate({ type: data.type, companyId: data.companyId, price: data.price })
+        mutate({ companyId: data.companyId, usage_report: data.usage_reports[0] })
     }
-
-
-
-
 
     const createRowsDataFromResponse = (data) => {
 
@@ -266,7 +121,7 @@ const UsageReportComponent = () => {
         })
     }
 
-    if (isLoading || isAddingUsageReport || loadingConfigsData) {
+    if (isLoading || isAddingUsageReport) {
         return <FullPageLoading />
     }
 
@@ -298,8 +153,8 @@ const UsageReportComponent = () => {
                         <Drawer open={addUsageReportDrawerOpen} onClose={() => { setAddUsageReportDrawerOpen(false) }} anchor='right' >
                             <Grid sx={{ width: '400px', p: 3 }} container direction='row' justifyContent='space-between' alignItems='center'>
                                 <Grid item >
-                                    <Typography sx={{ fontSize: 18, fontWeight: 'bold' }}>Add New Configuration</Typography>
-                                    <Typography sx={{ fontSize: 17, mb: 2 }}>Add New Configuration</Typography>
+                                    <Typography sx={{ fontSize: 18, fontWeight: 'bold' }}>Add New Usage Report</Typography>
+                                    <Typography sx={{ fontSize: 17, mb: 2 }}>Add New Usage Report</Typography>
 
 
                                 </Grid>
@@ -311,7 +166,7 @@ const UsageReportComponent = () => {
 
                             </Grid>
 
-                            <form onSubmit={handleSubmit(handleAddConfig)} style={{ width: 400 }}>
+                            <form onSubmit={handleSubmit(handleAddUsageReport)} style={{ width: 400 }}>
 
 
                                 {!loadingCompanies && companies && <select {...register('companyId')} style={{ ...textInputFieldStyle }} placeholder='Company'>
@@ -322,39 +177,19 @@ const UsageReportComponent = () => {
                                     }
                                 </select>}
 
-
-
-                                {!loadingConfigsData && systemConfigData && <select {...register('type')} style={{ ...textInputFieldStyle }} placeholder='Type'>
-                                    {
-                                        systemConfigData['payment-config-types'].map(role => {
-                                            return <option key={role.value} value={role.value}>{role.name}</option>
-                                        })
-                                    }
-                                </select>}
-
                                 <input
-                                    placeholder='Price'
+                                    placeholder='Add Usga report in CSV format'
+                                    type='file'
                                     style={{ ...textInputFieldStyle }}
-                                    {...register('price')}
+                                    {...register('usage_reports')}
                                 />
 
                                 <Box sx={{ display: 'flex', direction: 'row', alignItems: 'center', justifyContent: 'flex-end', p: 3 }} >
-                                    <Button type='submit' sx={{ color: 'white', backgroundColor: kGreenColor, '&:hover': { backgroundColor: kGreenColor } }}>Add Payment Configuration</Button>
+                                    <Button type='submit' sx={{ color: 'white', backgroundColor: kGreenColor, '&:hover': { backgroundColor: kGreenColor } }}>Add Usage Report</Button>
                                 </Box>
 
                             </form>
-
-
-
-
                         </Drawer>
-
-                        {/* <Button sx={{ mr: 1, fontWeight: '600', color: kGreenColor, fontSize: 10 }} startIcon={<Download />} >
-                            Export
-                        </Button>
-                        <Button sx={{ fontWeight: '600', color: kGreenColor, fontSize: 10 }} startIcon={<Tune />} >
-                            Add Filter
-                        </Button> */}
                     </Grid>
                 </Grid>
 
